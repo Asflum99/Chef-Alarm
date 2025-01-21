@@ -1,6 +1,7 @@
 package com.asflum.cocina
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.AlarmClock
@@ -23,7 +24,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.KeyboardActions
@@ -34,7 +34,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -45,13 +44,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Vertical
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -61,9 +56,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.asflum.cocina.ui.theme.CocinaTheme
 import kotlinx.coroutines.launch
+import java.time.LocalTime
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,14 +72,28 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+fun createAlarm(
+    context: Context,
+    hour: Int,
+    minutes: Int,
+    message: String) {
+    val intent = Intent(ACTION_SET_ALARM).apply {
+        putExtra(AlarmClock.EXTRA_HOUR, hour)
+        putExtra(AlarmClock.EXTRA_MINUTES, minutes)
+        putExtra(AlarmClock.EXTRA_MESSAGE, message)
+    }
+    if (intent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(intent)
+    }
+}
+
 @Composable
 fun MyRow(
     text: String,
     expanded: MutableState<Boolean>,
     selected: MutableState<String>,
     options: List<String>,
-    time: MutableState<Int> = mutableIntStateOf(0)
-) {
+    time: MutableState<Int> = mutableIntStateOf(0)) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
@@ -205,6 +214,11 @@ fun Page2() {
     var errorMessage by remember { mutableStateOf("") }
 
     val focusManager = LocalFocusManager.current
+
+    val context = LocalContext.current
+
+    // Tiempo
+    val currentTime = LocalTime.now()
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -360,7 +374,15 @@ fun Page2() {
                         onCheckedChange = { checked = it },
                     )
                     Button(
-                        onClick = { TODO() }
+                        onClick = {
+                            val alarmTime = currentTime.plusMinutes(timeCalculated.intValue.toLong())
+
+                            createAlarm(
+                            context = context,
+                            hour = alarmTime.hour,
+                            minutes = alarmTime.minute,
+                            message = "Alarma")
+                        }
                     ) {
                         Text(text = "Programar alarma")
                     }
