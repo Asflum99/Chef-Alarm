@@ -1,6 +1,5 @@
 package com.asflum.cocina
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -25,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -76,11 +76,13 @@ fun createAlarm(
     context: Context,
     hour: Int,
     minutes: Int,
-    message: String) {
+    message: String
+) {
     val intent = Intent(ACTION_SET_ALARM).apply {
         putExtra(AlarmClock.EXTRA_HOUR, hour)
         putExtra(AlarmClock.EXTRA_MINUTES, minutes)
         putExtra(AlarmClock.EXTRA_MESSAGE, message)
+        putExtra(AlarmClock.EXTRA_SKIP_UI, true)
     }
     if (intent.resolveActivity(context.packageManager) != null) {
         context.startActivity(intent)
@@ -93,7 +95,8 @@ fun MyRow(
     expanded: MutableState<Boolean>,
     selected: MutableState<String>,
     options: List<String>,
-    time: MutableState<Int> = mutableIntStateOf(0)) {
+    time: MutableState<Int> = mutableIntStateOf(0)
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
@@ -134,9 +137,11 @@ fun MyRow(
                                 "Grande" -> {
                                     30
                                 }
+
                                 "Mediana" -> {
                                     20
                                 }
+
                                 else -> {
                                     10
                                 }
@@ -178,8 +183,9 @@ fun Page1() {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Page2() {
+fun Page2(page: PagerState) {
 
     // variables de Alimento
     val expandedFood = remember { mutableStateOf(false) }
@@ -219,6 +225,10 @@ fun Page2() {
 
     // Tiempo
     val currentTime = LocalTime.now()
+
+    val scope = rememberCoroutineScope()
+
+    var foodExtra by remember { mutableStateOf("") }
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -302,6 +312,8 @@ fun Page2() {
                     time = timeCalculated
                 )
 
+                foodExtra = selectedPotato.value
+
                 Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
             }
 
@@ -350,6 +362,7 @@ fun Page2() {
 
             if (calculateState) {
                 Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                 ) {
@@ -366,22 +379,42 @@ fun Page2() {
                     }
                 }
                 Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                 ) {
                     Checkbox(
                         checked = checked,
-                        onCheckedChange = { checked = it },
+                        onCheckedChange = { checked = it }
                     )
+                    Text(text = "Recordar alimento")
                     Button(
                         onClick = {
-                            val alarmTime = currentTime.plusMinutes(timeCalculated.intValue.toLong())
-
+                            val alarmTime =
+                                currentTime.plusMinutes(timeCalculated.intValue.toLong())
                             createAlarm(
-                            context = context,
-                            hour = alarmTime.hour,
-                            minutes = alarmTime.minute,
-                            message = "Alarma")
+                                context = context,
+                                hour = alarmTime.hour,
+                                minutes = alarmTime.minute,
+                                message = selectedFood.value
+                            )
+
+                            if (checked) {
+                                scope.launch {
+                                    val savedConfig = SavedConfig(
+                                        foodName = selectedFood.value,
+                                        foodQuantity = inputNumber,
+                                        foodMeasurement = selectedMeasurement,
+                                        foodCook = selectedCook.value,
+                                        foodExtra = foodExtra,
+                                        estimatedTime = timeCalculated.intValue
+                                    )
+                                    MyApplication.database.savedConfigDao().insert(savedConfig)
+                                }
+                            }
+                            scope.launch {
+                                page.animateScrollToPage(0)
+                            }
                         }
                     ) {
                         Text(text = "Programar alarma")
@@ -445,7 +478,7 @@ fun NavigationComponent() {
         ) { page ->
             when (page) {
                 0 -> Page1()
-                1 -> Page2()
+                1 -> Page2(pagerState)
             }
         }
     }
