@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.AlarmClock
 import android.provider.AlarmClock.ACTION_SET_ALARM
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -31,14 +33,17 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -57,7 +62,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.asflum.cocina.ui.theme.CocinaTheme
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalTime
 
 class MainActivity : ComponentActivity() {
@@ -86,6 +93,7 @@ fun createAlarm(
     }
     if (intent.resolveActivity(context.packageManager) != null) {
         context.startActivity(intent)
+        // FALTA PONER LA VENTANA DE ERROR
     }
 }
 
@@ -174,19 +182,83 @@ fun Title(text: String) {
 
 @Composable
 fun Page1() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize(align = Alignment.TopCenter)
-    ) {
-        Title("Alimentos Guardados")
+    val currentTime = LocalTime.now()
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    val namesList = remember { mutableStateListOf<String>() }
+    val estimatedTimeList = remember { mutableStateListOf<Int>() }
+    var dataLoaded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        try {
+            val names = withContext(Dispatchers.IO) {
+                MyApplication.database.savedConfigDao().getFoodNames()
+            }
+            val timesList = withContext(Dispatchers.IO) {
+                MyApplication.database.savedConfigDao().getTimesList()
+            }
+
+            namesList.addAll(names)
+            estimatedTimeList.addAll(timesList)
+            dataLoaded = true // Esto debe ejecutarse después de cargar todo
+        } catch (e: Exception) {
+            Log.e("Page1", "Error loading data: ${e.message}")
+        }
+    }
+
+    if (dataLoaded) {
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(align = Alignment.Center)
+            ) {
+                Title("Alimentos Guardados")
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize(align = Alignment.Center)
+            ) {
+                // Explicar lo de namesList.indices
+                namesList.forEachIndexed { index, name ->
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                val alarmTime =
+                                    currentTime.plusMinutes(estimatedTimeList[index].toLong())
+                                createAlarm(
+                                    context = context,
+                                    hour = alarmTime.hour,
+                                    minutes = alarmTime.minute,
+                                    message = name
+                                )
+                            }
+                        }
+                    ) {
+                        Text(text = name)
+                    }
+                }
+            }
+        }
+    } else {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Page2(page: PagerState) {
-
     // variables de Alimento
     val expandedFood = remember { mutableStateOf(false) }
     val selectedFood = remember { mutableStateOf("Seleccione alimento") }
@@ -430,7 +502,7 @@ fun Page2(page: PagerState) {
 @Composable
 fun NavigationComponent() {
     val pagerState = rememberPagerState(
-        pageCount = { 2 }, initialPage = 1
+        pageCount = { 2 }
     )
 
     val coroutineScope = rememberCoroutineScope()
