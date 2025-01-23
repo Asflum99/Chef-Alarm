@@ -75,7 +75,8 @@ fun Page1() {
                 IconButton(
                     onClick = {
                         coroutineScope.launch {
-                            MyApplication.database.savedConfigDao().delete(TODO())
+                            MyApplication.database.savedConfigDao().delete(food.id)
+                            foodViewModel.getAllFoodInfo()
                         }
                     }
                 ) {

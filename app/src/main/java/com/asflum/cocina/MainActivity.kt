@@ -33,7 +33,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -136,24 +135,6 @@ fun MyRow(
             }
         }
     }
-}
-
-@Composable
-fun windowHeight(): Int {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp
-    val calculatePadding = screenHeight / 9
-    return calculatePadding
-}
-
-@Composable
-fun Title(text: String) {
-    Text(
-        text = text,
-        fontSize = 20.sp,
-        textAlign = TextAlign.Center,
-        modifier = Modifier.padding(top = windowHeight().dp)
-    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)

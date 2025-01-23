@@ -66,15 +66,15 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
 
-    implementation("androidx.room:room-ktx:2.6.1")
+    implementation(libs.androidx.room.ktx)
 
     // Dependencia de ViewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     // Dependencia de Compose
-    implementation("androidx.compose.ui:ui:1.7.6")
-    implementation("androidx.compose.material:material:1.7.6")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.7.6")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0")
-    implementation("androidx.activity:activity-compose:1.6.0")
+    implementation(libs.ui)
+    implementation(libs.androidx.material)
+    implementation(libs.ui.tooling.preview)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
 }
