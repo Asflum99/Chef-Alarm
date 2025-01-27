@@ -22,14 +22,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -78,8 +83,13 @@ fun MyRow(
     expanded: MutableState<Boolean>,
     selected: MutableState<String>,
     options: List<String>,
-    time: MutableState<Int> = mutableIntStateOf(0)
+    time: MutableState<Int> = mutableIntStateOf(0),
+    input: String? = null,
 ) {
+    // variables de Error
+    var showError by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
@@ -101,36 +111,87 @@ fun MyRow(
                 .wrapContentSize(Alignment.Center)
         ) {
             Button(
-                onClick = { expanded.value = true },
+                onClick = {
+                    if (text == "Tazas de agua" && (input == "" || input == ".")) {
+                        showError = true
+                        errorMessage = "Por favor, ingrese una cantidad"
+                    }
+                    expanded.value = true
+                },
                 modifier = Modifier.width(175.dp) // considerar usar valor dinámico
             ) {
                 Text(text = selected.value)
             }
-            DropdownMenu(
-                expanded = expanded.value,
-                onDismissRequest = { expanded.value = false }
-            ) {
-                options.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(text = option) },
-                        onClick = {
-                            selected.value = option
-                            expanded.value = false
-                            time.value = when (selected.value) {
-                                "Grande" -> {
-                                    30
-                                }
+            if (showError) {
+                AlertDialog(
+                    onDismissRequest = { showError = false },
+                    title = { Text("Error") },
+                    text = { Text(errorMessage) },
+                    confirmButton = {
+                        Button(onClick = { showError = false }) {
+                            Text("Ok")
+                        }
+                    }
+                )
+            }
+            if (text == "Tazas de agua:" && input != null) {
+                DropdownMenu(
+                    expanded = expanded.value,
+                    onDismissRequest = { expanded.value = false }
+                ) {
+                    options.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(text = option) },
+                            onClick = {
+                                selected.value = option
+                                expanded.value = false
 
-                                "Mediana" -> {
-                                    20
-                                }
+                                time.value = when (selected.value) {
+                                    options[0] -> {
+                                        10
+                                    }
 
-                                else -> {
-                                    10
+                                    options[1] -> {
+                                        15
+                                    }
+
+                                    else -> {
+                                        18
+                                    }
+
                                 }
                             }
-                        }
-                    )
+                        )
+                    }
+                }
+            } else if (text == "Tamaño de papa:" && input != null) {
+                DropdownMenu(
+                    expanded = expanded.value,
+                    onDismissRequest = { expanded.value = false }
+                ) {
+                    options.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(text = option) },
+                            onClick = {
+                                selected.value = option
+                                expanded.value = false
+
+                                time.value = when (selected.value) {
+                                    "Grande" -> {
+                                        30
+                                    }
+
+                                    "Mediana" -> {
+                                        20
+                                    }
+
+                                    else -> {
+                                        10
+                                    }
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }

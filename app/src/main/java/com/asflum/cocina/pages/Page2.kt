@@ -31,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
@@ -64,10 +63,16 @@ fun Page2(page: PagerState) {
     val expandedPotato = remember { mutableStateOf(false) }
     val selectedPotato = remember { mutableStateOf("Tamaño de papa") }
     val optionsPotato = listOf("Grande", "Mediana", "Pequeña")
+
+    // variables de Arroz
+    val expandedRice = remember { mutableStateOf(false) }
+    val selectedRice = remember { mutableStateOf("Cantidad") }
+    val optionsRice = remember { mutableListOf<String>() }
+    val multipliers = listOf(1, 1.5, 2)
+
     val timeCalculated = remember { mutableIntStateOf(0) }
 
-    var columnHeight by remember { mutableIntStateOf(0) }
-    var inputNumber by remember { mutableStateOf("") }
+    val inputNumber = remember { mutableStateOf("") }
 
     var calculateState by remember { mutableStateOf(false) }
 
@@ -93,11 +98,11 @@ fun Page2(page: PagerState) {
             })
         }
         .padding(16.dp)) {
-        Column(modifier = Modifier
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
             .fillMaxHeight()
-            .onSizeChanged { size ->
-                columnHeight = size.height
-            }) {
+            ) {
 
             MyRow(
                 text = "Alimento",
@@ -115,8 +120,20 @@ fun Page2(page: PagerState) {
                     .fillMaxWidth()
             ) {
                 OutlinedTextField(
-                    value = inputNumber,
-                    onValueChange = { inputNumber = it },
+                    value = inputNumber.value,
+                    onValueChange = { newValue ->
+                        // Filtrar solo los caracteres numéricos
+                        if (newValue.all { it.isDigit() || it == '.' } && newValue.count { it == '.' } <= 1) {
+                            inputNumber.value = newValue
+                        }
+                        optionsRice.clear()
+                        selectedRice.value = "Cantidad"
+                        if (inputNumber.value != "") {
+                            for (multiplier in multipliers) {
+                                optionsRice.add((inputNumber.value.toDouble() * multiplier.toDouble()).toString())
+                            }
+                        }
+                    },
                     label = { Text("Ingrese cantidad") },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number
@@ -124,6 +141,7 @@ fun Page2(page: PagerState) {
                     keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                     modifier = Modifier.weight(1f)
                 )
+
 
                 Spacer(modifier = Modifier.padding(5.dp)) // considerar usar un valor dinámico
 
@@ -160,16 +178,25 @@ fun Page2(page: PagerState) {
 
             if (selectedFood.value == "Papa") {
                 MyRow(
-                    text = "Tamaño de papa:",
-                    expanded = expandedPotato,
-                    selected = selectedPotato,
-                    options = optionsPotato,
-                    time = timeCalculated
+                    "Tamaño de papa:",
+                    expandedPotato,
+                    selectedPotato,
+                    optionsPotato,
+                    timeCalculated
                 )
 
                 foodExtra = selectedPotato.value
 
                 Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
+            } else if (selectedFood.value == "Arroz") {
+                MyRow(
+                    "Tazas de agua:",
+                    expandedRice,
+                    selectedRice,
+                    optionsRice,
+                    timeCalculated,
+                    inputNumber.value
+                )
             }
 
             Box(
@@ -181,7 +208,7 @@ fun Page2(page: PagerState) {
                         if (selectedFood.value == "Seleccione alimento") {
                             showError = true
                             errorMessage = "Por favor, seleccione un alimento"
-                        } else if (inputNumber.isEmpty()) {
+                        } else if (inputNumber.value.isEmpty()) {
                             showError = true
                             errorMessage = "Por favor, ingrese una cantidad"
                         } else if (selectedMeasurement == "Tipo de medición") {
@@ -256,13 +283,18 @@ fun Page2(page: PagerState) {
                             )
 
                             if (checked) {
+                                val foodNameToSave = selectedFood.value
+                                val foodQuantityToSave = inputNumber.value
+                                val foodMeasurementToSave = selectedMeasurement
+                                val foodCookToSave = selectedCook.value
+                                val foodExtraToSave = foodExtra
                                 scope.launch {
                                     val savedConfig = SavedConfig(
-                                        foodName = selectedFood.value,
-                                        foodQuantity = inputNumber,
-                                        foodMeasurement = selectedMeasurement,
-                                        foodCook = selectedCook.value,
-                                        foodExtra = foodExtra,
+                                        foodName = foodNameToSave,
+                                        foodQuantity = foodQuantityToSave,
+                                        foodMeasurement = foodMeasurementToSave,
+                                        foodCook = foodCookToSave,
+                                        foodExtra = foodExtraToSave,
                                         estimatedTime = timeCalculated.intValue
                                     )
                                     MyApplication.database.savedConfigDao().insert(savedConfig)
@@ -271,11 +303,32 @@ fun Page2(page: PagerState) {
                             scope.launch {
                                 page.animateScrollToPage(0)
                             }
+                            selectedFood.value = "Seleccione alimento"
+                            selectedMeasurement = "Tipo de medición"
+                            selectedCook.value = "Tipo de cocción"
+                            selectedPotato.value = "Tamaño de papa"
+                            inputNumber.value = ""
+                            calculateState = false
+                            checked = false
                         }
                     ) {
                         Text(text = "Programar alarma")
                     }
                 }
+            }
+            Button(
+                onClick = {
+                    selectedFood.value = "Seleccione alimento"
+                    selectedMeasurement = "Tipo de medición"
+                    selectedCook.value = "Tipo de cocción"
+                    selectedPotato.value = "Tamaño de papa"
+                    inputNumber.value = ""
+                    calculateState = false
+                    checked = false
+                    selectedRice.value = "Cantidad"
+                }
+            ) {
+                Text(text = "Restablecer valores")
             }
         }
     }

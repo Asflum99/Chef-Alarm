@@ -14,6 +14,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -48,7 +49,11 @@ fun Page1() {
     }
 
     // Mostrar la columna con cada alimento
-    LazyColumn {
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
         items(foodList) { food ->
             Row(
                 horizontalArrangement = Arrangement.Center,
@@ -86,6 +91,18 @@ fun Page1() {
                         tint = Color.Gray
                     )
                 }
+            }
+        }
+        item {
+            Button(
+                onClick = {
+                    coroutineScope.launch {
+                        MyApplication.database.savedConfigDao().deleteAll()
+                        foodViewModel.getAllFoodInfo()
+                    }
+                }
+            ) {
+                Text(text = "Borrar todo")
             }
         }
     }

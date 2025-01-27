@@ -12,19 +12,18 @@ interface SavedConfigDao {
     @Query("DELETE FROM saved_configs")
     suspend fun deleteAll()
 
-    @Query("SELECT estimatedTime FROM saved_configs WHERE id = :id")
-    suspend fun getEstimatedTime(id: Int): Int
+//    @Query("SELECT estimatedTime FROM saved_configs WHERE id = :id")
+//    suspend fun getEstimatedTime(id: Int): Int
 
-    @Query("SELECT foodName FROM saved_configs WHERE id = :id")
-    suspend fun getFoodName(id: Int): String
+//    @Query("SELECT foodName FROM saved_configs WHERE id = :id")
+//    suspend fun getFoodName(id: Int): String
 
-    @Query("SELECT COUNT(1) FROM saved_configs")
-    suspend fun getRowCount(): Int
+//    @Query("SELECT COUNT(1) FROM saved_configs")
+//    suspend fun getRowCount(): Int
 
     @Query("DELETE FROM saved_configs WHERE id = :id")
     suspend fun delete(id: Int)
 
     @Query("SELECT * FROM saved_configs")
     suspend fun getAllFoodInfo(): List<SavedConfig>
-
 }
