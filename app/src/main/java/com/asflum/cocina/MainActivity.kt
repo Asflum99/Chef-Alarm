@@ -134,48 +134,17 @@ fun MyRow(
                     }
                 )
             }
-            if (text == "Tazas de agua:" && input != null) {
-                DropdownMenu(
-                    expanded = expanded.value,
-                    onDismissRequest = { expanded.value = false }
-                ) {
-                    options.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(text = option) },
-                            onClick = {
-                                selected.value = option
-                                expanded.value = false
-
-                                time.value = when (selected.value) {
-                                    options[0] -> {
-                                        10
-                                    }
-
-                                    options[1] -> {
-                                        15
-                                    }
-
-                                    else -> {
-                                        18
-                                    }
-
-                                }
-                            }
-                        )
-                    }
-                }
-            } else if (text == "Tamaño de papa:" && input != null) {
-                DropdownMenu(
-                    expanded = expanded.value,
-                    onDismissRequest = { expanded.value = false }
-                ) {
-                    options.forEach { option ->
-                        DropdownMenuItem(
-                            text = { Text(text = option) },
-                            onClick = {
-                                selected.value = option
-                                expanded.value = false
-
+            DropdownMenu(
+                expanded = expanded.value,
+                onDismissRequest = { expanded.value = false }
+            ) {
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(text = option) },
+                        onClick = {
+                            selected.value = option
+                            expanded.value = false
+                            if (text == "Tamaño de papa:") {
                                 time.value = when (selected.value) {
                                     "Grande" -> {
                                         30
@@ -189,9 +158,33 @@ fun MyRow(
                                         10
                                     }
                                 }
+                            } else if (text == "Tazas de agua:") {
+                                time.value = when (selected.value) {
+                                    options[0] -> {
+                                        10
+                                    }
+
+                                    options[1] -> {
+                                        15
+                                    }
+
+                                    else -> {
+                                        18
+                                    }
+                                }
+                            } else if (text == "Textura:") {
+                                time.value = when (selected.value) {
+                                    "Al dente" -> {
+                                        8
+                                    }
+
+                                    else -> {
+                                        10
+                                    }
+                                }
                             }
-                        )
-                    }
+                        }
+                    )
                 }
             }
         }

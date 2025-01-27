@@ -47,12 +47,12 @@ fun Page2(page: PagerState) {
     // variables de Alimento
     val expandedFood = remember { mutableStateOf(false) }
     val selectedFood = remember { mutableStateOf("Seleccione alimento") }
-    val optionsFood = listOf("Papa", "Arroz", "Fideos")
+    val optionsFood = listOf("Papa", "Arroz blanco", "Espaguetis")
 
     // variables de Medición
     var expandedMeasurement by remember { mutableStateOf(false) }
     var selectedMeasurement by remember { mutableStateOf("Tipo de medición") }
-    val optionsMeasurement = listOf("Gr", "Unidad", "Cup")
+    val optionsMeasurement = listOf("Gr", "Unidad", "Vasos")
 
     // variables de Cocción
     val expandedCook = remember { mutableStateOf(false) }
@@ -64,11 +64,16 @@ fun Page2(page: PagerState) {
     val selectedPotato = remember { mutableStateOf("Tamaño de papa") }
     val optionsPotato = listOf("Grande", "Mediana", "Pequeña")
 
-    // variables de Arroz
+    // variables de Arroz blanco
     val expandedRice = remember { mutableStateOf(false) }
     val selectedRice = remember { mutableStateOf("Cantidad") }
     val optionsRice = remember { mutableListOf<String>() }
     val multipliers = listOf(1, 1.5, 2)
+
+    // variables de Espaguetis
+    val expandedSpaghetti = remember { mutableStateOf(false) }
+    val selectedSpaghetti = remember { mutableStateOf("Textura") }
+    val optionsSpaghetti = listOf("Al dente", "Suave")
 
     val timeCalculated = remember { mutableIntStateOf(0) }
 
@@ -188,7 +193,7 @@ fun Page2(page: PagerState) {
                 foodExtra = selectedPotato.value
 
                 Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
-            } else if (selectedFood.value == "Arroz") {
+            } else if (selectedFood.value == "Arroz blanco") {
                 MyRow(
                     "Tazas de agua:",
                     expandedRice,
@@ -197,6 +202,22 @@ fun Page2(page: PagerState) {
                     timeCalculated,
                     inputNumber.value
                 )
+
+                foodExtra = selectedRice.value
+
+                Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
+            } else if (selectedFood.value == "Espaguetis") {
+                MyRow(
+                    "Textura:",
+                    expandedSpaghetti,
+                    selectedSpaghetti,
+                    optionsSpaghetti,
+                    timeCalculated
+                )
+
+                foodExtra = selectedSpaghetti.value
+
+                Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
             }
 
             Box(
