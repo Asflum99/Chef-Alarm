@@ -181,43 +181,50 @@ fun Page2(page: PagerState) {
 
             Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
 
-            if (selectedFood.value == "Papa") {
-                MyRow(
-                    "Tamaño de papa:",
-                    expandedPotato,
-                    selectedPotato,
-                    optionsPotato,
-                    timeCalculated
-                )
+            when (selectedFood.value) {
+                "Papa" -> {
+                    MyRow(
+                        "Tamaño de papa:",
+                        expandedPotato,
+                        selectedPotato,
+                        optionsPotato,
+                        timeCalculated,
+                        optionsCook = selectedCook.value
+                    )
 
-                foodExtra = selectedPotato.value
+                    selectedMeasurement = "Unidad"
+                    foodExtra = selectedPotato.value
+                    Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
+                }
+                "Arroz blanco" -> {
+                    MyRow(
+                        "Tazas de agua:",
+                        expandedRice,
+                        selectedRice,
+                        optionsRice,
+                        timeCalculated,
+                        inputNumber.value
+                    )
 
-                Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
-            } else if (selectedFood.value == "Arroz blanco") {
-                MyRow(
-                    "Tazas de agua:",
-                    expandedRice,
-                    selectedRice,
-                    optionsRice,
-                    timeCalculated,
-                    inputNumber.value
-                )
+                    selectedMeasurement = "Vasos"
+                    selectedCook.value = "Hervido"
+                    foodExtra = selectedRice.value
+                    Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
+                }
+                "Espaguetis" -> {
+                    MyRow(
+                        "Textura:",
+                        expandedSpaghetti,
+                        selectedSpaghetti,
+                        optionsSpaghetti,
+                        timeCalculated
+                    )
 
-                foodExtra = selectedRice.value
-
-                Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
-            } else if (selectedFood.value == "Espaguetis") {
-                MyRow(
-                    "Textura:",
-                    expandedSpaghetti,
-                    selectedSpaghetti,
-                    optionsSpaghetti,
-                    timeCalculated
-                )
-
-                foodExtra = selectedSpaghetti.value
-
-                Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
+                    selectedMeasurement = "Gramos"
+                    selectedCook.value = "Hervido"
+                    foodExtra = selectedSpaghetti.value
+                    Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
+                }
             }
 
             Box(
@@ -270,15 +277,15 @@ fun Page2(page: PagerState) {
                         .align(Alignment.CenterHorizontally)
                 ) {
                     Button(
-                        onClick = { timeCalculated.value -= 5 }
+                        onClick = { timeCalculated.value -= 1 }
                     ) {
-                        Text(text = "-5")
+                        Text(text = "-1")
                     }
                     Text(text = "${timeCalculated.intValue} min")
                     Button(
-                        onClick = { timeCalculated.value += 5 }
+                        onClick = { timeCalculated.value += 1 }
                     ) {
-                        Text(text = "+5")
+                        Text(text = "+1")
                     }
                 }
                 Row(

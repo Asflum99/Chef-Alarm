@@ -8,6 +8,7 @@ import android.provider.AlarmClock.ACTION_SET_ALARM
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +25,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
@@ -46,6 +48,7 @@ import com.asflum.cocina.ui.theme.CocinaTheme
 import kotlinx.coroutines.launch
 import com.asflum.cocina.pages.Page1
 import com.asflum.cocina.pages.Page2
+import com.asflum.cocina.ui.theme.lightGreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,6 +88,7 @@ fun MyRow(
     options: List<String>,
     time: MutableState<Int> = mutableIntStateOf(0),
     input: String? = null,
+    optionsCook: String? = null
 ) {
     // variables de Error
     var showError by remember { mutableStateOf(false) }
@@ -118,7 +122,9 @@ fun MyRow(
                     }
                     expanded.value = true
                 },
-                modifier = Modifier.width(175.dp) // considerar usar valor dinámico
+                modifier = Modifier.width(175.dp), // considerar usar valor dinámico
+                colors = ButtonColors(Color.White, lightGreen, Color.Black, Color.Black),
+                border = BorderStroke(3.dp, Color.Gray)
             ) {
                 Text(text = selected.value)
             }
@@ -145,17 +151,23 @@ fun MyRow(
                             selected.value = option
                             expanded.value = false
                             if (text == "Tamaño de papa:") {
-                                time.value = when (selected.value) {
-                                    "Grande" -> {
-                                        30
+                                if (selected.value == "Grande") {
+                                    if (optionsCook == "Vapor") {
+                                        time.value = 35
+                                    } else {
+                                        time.value = 30
                                     }
-
-                                    "Mediana" -> {
-                                        20
+                                } else if (selected.value == "Mediana") {
+                                    if (optionsCook == "Vapor") {
+                                        time.value = 22
+                                    } else {
+                                        time.value = 20
                                     }
-
-                                    else -> {
-                                        10
+                                } else {
+                                    if (optionsCook == "Vapor") {
+                                        time.value = 12
+                                    } else {
+                                        time.value = 10
                                     }
                                 }
                             } else if (text == "Tazas de agua:") {
