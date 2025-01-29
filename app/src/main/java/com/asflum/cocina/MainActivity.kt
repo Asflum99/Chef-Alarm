@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -93,6 +94,15 @@ fun MyRow(
     // variables de Error
     var showError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
+    var isButtonEnabled by remember { mutableStateOf(true) }
+
+    if (input == "Espaguetis" || input == "Arroz blanco") {
+        isButtonEnabled = false
+    }
+
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val dynamicPadding = screenWidth / 30
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -107,7 +117,7 @@ fun MyRow(
             fontSize = 19.sp
         )
 
-        Spacer(modifier = Modifier.padding(5.dp))
+        Spacer(modifier = Modifier.padding(dynamicPadding))
 
         Box(
             modifier = Modifier
@@ -115,6 +125,7 @@ fun MyRow(
                 .wrapContentSize(Alignment.Center)
         ) {
             Button(
+                enabled = isButtonEnabled,
                 onClick = {
                     if (text == "Tazas de agua" && (input == "" || input == ".")) {
                         showError = true
@@ -122,9 +133,9 @@ fun MyRow(
                     }
                     expanded.value = true
                 },
-                modifier = Modifier.width(175.dp), // considerar usar valor dinámico
-                colors = ButtonColors(Color.White, lightGreen, Color.Black, Color.Black),
-                border = BorderStroke(3.dp, Color.Gray)
+                modifier = Modifier.width(screenWidth / 2),
+                colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
+                border = BorderStroke(3.dp, lightGreen)
             ) {
                 Text(text = selected.value)
             }
@@ -219,7 +230,8 @@ fun NavigationComponent() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.2f) // Porcentaje de espacio para la parte superior
+                // Porcentaje de espacio para la parte superior
+                .weight(0.2f)
                 .background(Color.LightGray)
         ) {
             Row(

@@ -1,5 +1,6 @@
 package com.asflum.cocina.pages
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,9 +17,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,7 +30,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
@@ -39,20 +41,27 @@ import com.asflum.cocina.MyApplication
 import com.asflum.cocina.MyRow
 import com.asflum.cocina.SavedConfig
 import com.asflum.cocina.createAlarm
+import com.asflum.cocina.ui.theme.lightGreen
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 
 @Composable
 fun Page2(page: PagerState) {
+
+    // Ancho de pantalla
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val screenHeight = configuration.screenHeightDp.dp
+    val dynamicWidthPadding = screenWidth / 30
+    val dynamicHeightPadding = screenHeight / 120
+
     // variables de Alimento
     val expandedFood = remember { mutableStateOf(false) }
     val selectedFood = remember { mutableStateOf("Seleccione alimento") }
     val optionsFood = listOf("Papa", "Arroz blanco", "Espaguetis")
 
     // variables de Medición
-    var expandedMeasurement by remember { mutableStateOf(false) }
     var selectedMeasurement by remember { mutableStateOf("Tipo de medición") }
-    val optionsMeasurement = listOf("Gr", "Unidad", "Vasos")
 
     // variables de Cocción
     val expandedCook = remember { mutableStateOf(false) }
@@ -102,7 +111,7 @@ fun Page2(page: PagerState) {
                 focusManager.clearFocus()
             })
         }
-        .padding(16.dp)) {
+        .padding(screenWidth / 24)) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -110,13 +119,13 @@ fun Page2(page: PagerState) {
             ) {
 
             MyRow(
-                text = "Alimento",
+                text = "Alimento:",
                 expanded = expandedFood,
                 selected = selectedFood,
                 options = optionsFood
             )
 
-            Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
+            Spacer(modifier = Modifier.padding(dynamicHeightPadding))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -147,39 +156,88 @@ fun Page2(page: PagerState) {
                     modifier = Modifier.weight(1f)
                 )
 
+                Spacer(modifier = Modifier.padding(dynamicWidthPadding))
 
-                Spacer(modifier = Modifier.padding(5.dp)) // considerar usar un valor dinámico
-
-                Box {
-                    Button(
-                        onClick = { expandedMeasurement = true },
-                        modifier = Modifier.width(175.dp) // considerar usar un valor dinámico
-                    ) {
-                        Text(text = selectedMeasurement)
+                when (selectedFood.value) {
+                    "Papa" -> {
+                        Button(
+                            enabled = false,
+                            colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
+                            border = BorderStroke(3.dp, lightGreen),
+                            onClick = {},
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(text = "Unidades")
+                        }
                     }
-                    DropdownMenu(expanded = expandedMeasurement,
-                        onDismissRequest = { expandedMeasurement = false }) {
-                        optionsMeasurement.forEach { option ->
-                            DropdownMenuItem(text = { Text(text = option) }, onClick = {
-                                selectedMeasurement = option
-                                expandedMeasurement = false
-                            })
+                    "Arroz blanco" -> {
+                        Button(
+                            enabled = false,
+                            colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
+                            border = BorderStroke(3.dp, lightGreen),
+                            onClick = {},
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(text = "Vasos")
+                        }
+                    }
+                    "Espaguetis" -> {
+                        Button(
+                            enabled = false,
+                            colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
+                            border = BorderStroke(3.dp, lightGreen),
+                            onClick = {},
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(text = "Gramos")
+                        }
+                    }
+                    else -> {
+                        Button(
+                            enabled = false,
+                            colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
+                            border = BorderStroke(3.dp, lightGreen),
+                            onClick = {},
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(text = "Tipo de medición")
                         }
                     }
                 }
-
             }
 
-            Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
+            Spacer(modifier = Modifier.padding(dynamicHeightPadding))
 
-            MyRow(
-                text = "Cocción:",
-                expanded = expandedCook,
-                selected = selectedCook,
-                options = optionsCook
-            )
+            when (selectedFood.value) {
+                "Papa" -> {
+                    MyRow(
+                        text = "Cocción:",
+                        expanded = expandedCook,
+                        selected = selectedCook,
+                        options = optionsCook
+                    )
+                }
+                "Espaguetis" -> {
+                    MyRow(
+                        text = "Cocción:",
+                        expanded = expandedCook,
+                        selected = selectedCook,
+                        options = optionsCook,
+                        input = "Espaguetis"
+                    )
+                }
+                "Arroz blanco" -> {
+                    MyRow(
+                        text = "Cocción:",
+                        expanded = expandedCook,
+                        selected = selectedCook,
+                        options = optionsCook,
+                        input = "Arroz blanco"
+                    )
+                }
+            }
 
-            Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
+            Spacer(modifier = Modifier.padding(dynamicHeightPadding))
 
             when (selectedFood.value) {
                 "Papa" -> {
@@ -252,7 +310,8 @@ fun Page2(page: PagerState) {
                             calculateState = true
                         }
                     },
-                    modifier = Modifier.width(175.dp) // considerar usar un valor dinámico
+                    modifier = Modifier.width(screenWidth / 2),
+                    colors = ButtonColors(lightGreen, Color.White, Color.White, lightGreen)
                 ) {
                     Text(text = "Calcular")
                 }
@@ -338,12 +397,17 @@ fun Page2(page: PagerState) {
                             inputNumber.value = ""
                             calculateState = false
                             checked = false
+                            selectedRice.value = "Cantidad"
+                            selectedSpaghetti.value = "Textura"
                         }
                     ) {
                         Text(text = "Programar alarma")
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.padding(dynamicHeightPadding))
+
             Button(
                 onClick = {
                     selectedFood.value = "Seleccione alimento"
@@ -354,7 +418,10 @@ fun Page2(page: PagerState) {
                     calculateState = false
                     checked = false
                     selectedRice.value = "Cantidad"
-                }
+                },
+                colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
+                border = BorderStroke(3.dp, lightGreen),
+                modifier = Modifier.width(screenWidth / 2)
             ) {
                 Text(text = "Restablecer valores")
             }
