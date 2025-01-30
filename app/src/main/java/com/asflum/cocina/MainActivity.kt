@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -49,7 +50,9 @@ import com.asflum.cocina.ui.theme.CocinaTheme
 import kotlinx.coroutines.launch
 import com.asflum.cocina.pages.Page1
 import com.asflum.cocina.pages.Page2
-import com.asflum.cocina.ui.theme.lightGreen
+import com.asflum.cocina.ui.theme.MustardYellow
+import com.asflum.cocina.ui.theme.SpinachGreen
+import com.asflum.cocina.ui.theme.WarmWhite
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,8 +92,14 @@ fun MyRow(
     options: List<String>,
     time: MutableState<Int> = mutableIntStateOf(0),
     input: String? = null,
-    optionsCook: String? = null
+    optionsCook: String? = null,
+    cookPotato: Map<String, Int> = emptyMap(),
+    sizesPotato: Map<String, Int> = emptyMap(),
 ) {
+    // Variables de papa
+    println(cookPotato)
+    println(sizesPotato)
+
     // variables de Error
     var showError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
@@ -135,7 +144,8 @@ fun MyRow(
                 },
                 modifier = Modifier.width(screenWidth / 2),
                 colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
-                border = BorderStroke(3.dp, lightGreen)
+                border = BorderStroke(3.dp, SpinachGreen),
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Text(text = selected.value)
             }
@@ -159,27 +169,25 @@ fun MyRow(
                     DropdownMenuItem(
                         text = { Text(text = option) },
                         onClick = {
+                            println(cookPotato)
+                            println(sizesPotato)
                             selected.value = option
                             expanded.value = false
                             if (text == "Tamaño de papa:") {
-                                if (selected.value == "Grande") {
-                                    if (optionsCook == "Vapor") {
-                                        time.value = 35
-                                    } else {
-                                        time.value = 30
+                                when (selected.value) {
+                                    "Grande" -> {
+                                        time.value += sizesPotato["Grande"] ?: 0
                                     }
-                                } else if (selected.value == "Mediana") {
-                                    if (optionsCook == "Vapor") {
-                                        time.value = 22
-                                    } else {
-                                        time.value = 20
+                                    "Mediana" -> {
+                                        time.value += sizesPotato["Mediana"] ?: 0
                                     }
-                                } else {
-                                    if (optionsCook == "Vapor") {
-                                        time.value = 12
-                                    } else {
-                                        time.value = 10
+                                    else -> {
+                                        time.value += sizesPotato["Pequeña"] ?: 0
                                     }
+                                }
+                            } else if (text == "Cocción:") {
+                                if (selected.value == "Vapor") {
+                                    time.value += (time.value * 20) / 100
                                 }
                             } else if (text == "Tazas de agua:") {
                                 time.value = when (selected.value) {
@@ -232,7 +240,7 @@ fun NavigationComponent() {
                 .fillMaxWidth()
                 // Porcentaje de espacio para la parte superior
                 .weight(0.2f)
-                .background(Color.LightGray)
+                .background(MustardYellow)
         ) {
             Row(
                 modifier = Modifier
@@ -261,9 +269,11 @@ fun NavigationComponent() {
             }
         }
         HorizontalPager(
-            state = pagerState, modifier = Modifier
+            state = pagerState,
+            modifier = Modifier
                 .fillMaxWidth()
                 .weight(0.8f)
+                .background(WarmWhite)
         ) { page ->
             when (page) {
                 0 -> Page1()

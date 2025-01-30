@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
@@ -41,7 +43,8 @@ import com.asflum.cocina.MyApplication
 import com.asflum.cocina.MyRow
 import com.asflum.cocina.SavedConfig
 import com.asflum.cocina.createAlarm
-import com.asflum.cocina.ui.theme.lightGreen
+import com.asflum.cocina.ui.theme.DarkGray
+import com.asflum.cocina.ui.theme.SpinachGreen
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 
@@ -72,6 +75,8 @@ fun Page2(page: PagerState) {
     val expandedPotato = remember { mutableStateOf(false) }
     val selectedPotato = remember { mutableStateOf("Tamaño de papa") }
     val optionsPotato = listOf("Grande", "Mediana", "Pequeña")
+    val sizesPotato = mapOf("Grande" to 30, "Mediana" to 20, "Pequeña" to 10)
+    val cookPotato = mapOf("Hervido" to 0, "Vapor" to 5)
 
     // variables de Arroz blanco
     val expandedRice = remember { mutableStateOf(false) }
@@ -112,183 +117,213 @@ fun Page2(page: PagerState) {
             })
         }
         .padding(screenWidth / 24)) {
-        Column(
+        LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-            .fillMaxHeight()
-            ) {
+            modifier = Modifier.fillMaxHeight(),
+            verticalArrangement = Arrangement.spacedBy(dynamicHeightPadding)
+        ) {
+            item {
+                MyRow(
+                    text = "Alimento:",
+                    expanded = expandedFood,
+                    selected = selectedFood,
+                    options = optionsFood
+                )
+            }
+            item {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = inputNumber.value,
+                        onValueChange = { newValue ->
+                            // Filtrar solo los caracteres numéricos
+                            if (newValue.all { it.isDigit() || it == '.' } && newValue.count { it == '.' } <= 1) {
+                                inputNumber.value = newValue
+                            }
+                            optionsRice.clear()
+                            selectedRice.value = "Cantidad"
+                            if (inputNumber.value != "") {
+                                for (multiplier in multipliers) {
+                                    optionsRice.add((inputNumber.value.toDouble() * multiplier.toDouble()).toString())
+                                }
+                            }
+                        },
+                        label = { Text("Ingrese cantidad") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        ),
+                        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                        modifier = Modifier.weight(1f)
+                    )
 
-            MyRow(
-                text = "Alimento:",
-                expanded = expandedFood,
-                selected = selectedFood,
-                options = optionsFood
-            )
+                    Spacer(modifier = Modifier.padding(dynamicWidthPadding))
 
-            Spacer(modifier = Modifier.padding(dynamicHeightPadding))
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                OutlinedTextField(
-                    value = inputNumber.value,
-                    onValueChange = { newValue ->
-                        // Filtrar solo los caracteres numéricos
-                        if (newValue.all { it.isDigit() || it == '.' } && newValue.count { it == '.' } <= 1) {
-                            inputNumber.value = newValue
-                        }
-                        optionsRice.clear()
-                        selectedRice.value = "Cantidad"
-                        if (inputNumber.value != "") {
-                            for (multiplier in multipliers) {
-                                optionsRice.add((inputNumber.value.toDouble() * multiplier.toDouble()).toString())
+                    when (selectedFood.value) {
+                        "Papa" -> {
+                            Button(
+                                enabled = false,
+                                colors = ButtonColors(
+                                    Color.White,
+                                    Color.DarkGray,
+                                    Color.White,
+                                    Color.DarkGray
+                                ),
+                                border = BorderStroke(3.dp, SpinachGreen),
+                                onClick = {},
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text(text = "Unidades")
                             }
                         }
-                    },
-                    label = { Text("Ingrese cantidad") },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number
-                    ),
-                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                    modifier = Modifier.weight(1f)
-                )
 
-                Spacer(modifier = Modifier.padding(dynamicWidthPadding))
+                        "Arroz blanco" -> {
+                            Button(
+                                enabled = false,
+                                colors = ButtonColors(
+                                    Color.White,
+                                    Color.DarkGray,
+                                    Color.White,
+                                    Color.DarkGray
+                                ),
+                                border = BorderStroke(3.dp, SpinachGreen),
+                                onClick = {},
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text(text = "Vasos")
+                            }
+                        }
 
+                        "Espaguetis" -> {
+                            Button(
+                                enabled = false,
+                                colors = ButtonColors(
+                                    Color.White,
+                                    Color.DarkGray,
+                                    Color.White,
+                                    Color.DarkGray
+                                ),
+                                border = BorderStroke(3.dp, SpinachGreen),
+                                onClick = {},
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text(text = "Gramos")
+                            }
+                        }
+
+                        else -> {
+                            Button(
+                                enabled = false,
+                                colors = ButtonColors(
+                                    Color.White,
+                                    Color.DarkGray,
+                                    Color.White,
+                                    Color.DarkGray
+                                ),
+                                border = BorderStroke(3.dp, SpinachGreen),
+                                onClick = {},
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text(text = "Tipo de medición")
+                            }
+                        }
+                    }
+                }
+            }
+            item {
                 when (selectedFood.value) {
                     "Papa" -> {
-                        Button(
-                            enabled = false,
-                            colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
-                            border = BorderStroke(3.dp, lightGreen),
-                            onClick = {},
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(text = "Unidades")
-                        }
+                        MyRow(
+                            "Tamaño de papa:",
+                            expandedPotato,
+                            selectedPotato,
+                            optionsPotato,
+                            timeCalculated,
+                            optionsCook = selectedCook.value,
+                            cookPotato = cookPotato,
+                            sizesPotato = sizesPotato
+                        )
+
+                        selectedMeasurement = "Unidad"
+                        foodExtra = selectedPotato.value
                     }
+
                     "Arroz blanco" -> {
-                        Button(
-                            enabled = false,
-                            colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
-                            border = BorderStroke(3.dp, lightGreen),
-                            onClick = {},
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(text = "Vasos")
-                        }
+                        MyRow(
+                            "Tazas de agua:",
+                            expandedRice,
+                            selectedRice,
+                            optionsRice,
+                            timeCalculated,
+                            inputNumber.value
+                        )
+
+                        selectedMeasurement = "Vasos"
+                        selectedCook.value = "Hervido"
+                        foodExtra = selectedRice.value
                     }
+
                     "Espaguetis" -> {
-                        Button(
-                            enabled = false,
-                            colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
-                            border = BorderStroke(3.dp, lightGreen),
-                            onClick = {},
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(text = "Gramos")
-                        }
-                    }
-                    else -> {
-                        Button(
-                            enabled = false,
-                            colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
-                            border = BorderStroke(3.dp, lightGreen),
-                            onClick = {},
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(text = "Tipo de medición")
-                        }
+                        MyRow(
+                            "Textura:",
+                            expandedSpaghetti,
+                            selectedSpaghetti,
+                            optionsSpaghetti,
+                            timeCalculated
+                        )
+
+                        selectedMeasurement = "Gramos"
+                        selectedCook.value = "Hervido"
+                        foodExtra = selectedSpaghetti.value
                     }
                 }
             }
+            item {
+                when (selectedFood.value) {
+                    "Papa" -> {
+                        MyRow(
+                            "Cocción:",
+                            expandedCook,
+                            selectedCook,
+                            optionsCook,
+                            timeCalculated,
+                            cookPotato = cookPotato,
+                            sizesPotato = sizesPotato
+                        )
+                        Spacer(modifier = Modifier.padding(dynamicHeightPadding))
+                    }
 
-            Spacer(modifier = Modifier.padding(dynamicHeightPadding))
+                    "Espaguetis" -> {
+                        MyRow(
+                            text = "Cocción:",
+                            expanded = expandedCook,
+                            selected = selectedCook,
+                            options = optionsCook,
+                            input = "Espaguetis"
+                        )
+                        Spacer(modifier = Modifier.padding(dynamicHeightPadding))
+                    }
 
-            when (selectedFood.value) {
-                "Papa" -> {
-                    MyRow(
-                        text = "Cocción:",
-                        expanded = expandedCook,
-                        selected = selectedCook,
-                        options = optionsCook
-                    )
-                }
-                "Espaguetis" -> {
-                    MyRow(
-                        text = "Cocción:",
-                        expanded = expandedCook,
-                        selected = selectedCook,
-                        options = optionsCook,
-                        input = "Espaguetis"
-                    )
-                }
-                "Arroz blanco" -> {
-                    MyRow(
-                        text = "Cocción:",
-                        expanded = expandedCook,
-                        selected = selectedCook,
-                        options = optionsCook,
-                        input = "Arroz blanco"
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.padding(dynamicHeightPadding))
-
-            when (selectedFood.value) {
-                "Papa" -> {
-                    MyRow(
-                        "Tamaño de papa:",
-                        expandedPotato,
-                        selectedPotato,
-                        optionsPotato,
-                        timeCalculated,
-                        optionsCook = selectedCook.value
-                    )
-
-                    selectedMeasurement = "Unidad"
-                    foodExtra = selectedPotato.value
-                    Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
-                }
-                "Arroz blanco" -> {
-                    MyRow(
-                        "Tazas de agua:",
-                        expandedRice,
-                        selectedRice,
-                        optionsRice,
-                        timeCalculated,
-                        inputNumber.value
-                    )
-
-                    selectedMeasurement = "Vasos"
-                    selectedCook.value = "Hervido"
-                    foodExtra = selectedRice.value
-                    Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
-                }
-                "Espaguetis" -> {
-                    MyRow(
-                        "Textura:",
-                        expandedSpaghetti,
-                        selectedSpaghetti,
-                        optionsSpaghetti,
-                        timeCalculated
-                    )
-
-                    selectedMeasurement = "Gramos"
-                    selectedCook.value = "Hervido"
-                    foodExtra = selectedSpaghetti.value
-                    Spacer(modifier = Modifier.padding(8.dp)) // considerar usar un valor dinámico
+                    "Arroz blanco" -> {
+                        MyRow(
+                            text = "Cocción:",
+                            expanded = expandedCook,
+                            selected = selectedCook,
+                            options = optionsCook,
+                            input = "Arroz blanco"
+                        )
+                        Spacer(modifier = Modifier.padding(dynamicHeightPadding))
+                    }
                 }
             }
-
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-            ) {
+            item {
                 Button(
                     onClick = {
                         if (selectedFood.value == "Seleccione alimento") {
@@ -311,10 +346,15 @@ fun Page2(page: PagerState) {
                         }
                     },
                     modifier = Modifier.width(screenWidth / 2),
-                    colors = ButtonColors(lightGreen, Color.White, Color.White, lightGreen)
+                    colors = ButtonColors(SpinachGreen, Color.White, Color.White, SpinachGreen)
                 ) {
-                    Text(text = "Calcular")
+                    Text(
+                        text = "Calcular",
+                        color = DarkGray
+                    )
                 }
+            }
+            item {
                 if (showError) {
                     AlertDialog(
                         onDismissRequest = { showError = false },
@@ -328,102 +368,130 @@ fun Page2(page: PagerState) {
                     )
                 }
             }
-
-            if (calculateState) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                ) {
-                    Button(
-                        onClick = { timeCalculated.value -= 1 }
+            item {
+                if (calculateState) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+//                        modifier = Modifier
+//                            .align(Alignment.CenterHorizontally)
                     ) {
-                        Text(text = "-1")
-                    }
-                    Text(text = "${timeCalculated.intValue} min")
-                    Button(
-                        onClick = { timeCalculated.value += 1 }
-                    ) {
-                        Text(text = "+1")
-                    }
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                ) {
-                    Checkbox(
-                        checked = checked,
-                        onCheckedChange = { checked = it }
-                    )
-                    Text(text = "Recordar alimento")
-                    Button(
-                        onClick = {
-                            val currentTime = LocalTime.now()
-                            val alarmTime =
-                                currentTime.plusMinutes(timeCalculated.intValue.toLong())
-                            createAlarm(
-                                context = context,
-                                hour = alarmTime.hour,
-                                minutes = alarmTime.minute,
-                                message = selectedFood.value
+                        Button(
+                            onClick = { timeCalculated.value -= 1 },
+                            colors = ButtonColors(Color.White, DarkGray, Color.White, SpinachGreen),
+                            border = BorderStroke(3.dp, SpinachGreen)
+                        ) {
+                            Text(
+                                text = "-1",
+                                color = DarkGray
                             )
-
-                            if (checked) {
-                                val foodNameToSave = selectedFood.value
-                                val foodQuantityToSave = inputNumber.value
-                                val foodMeasurementToSave = selectedMeasurement
-                                val foodCookToSave = selectedCook.value
-                                val foodExtraToSave = foodExtra
-                                scope.launch {
-                                    val savedConfig = SavedConfig(
-                                        foodName = foodNameToSave,
-                                        foodQuantity = foodQuantityToSave,
-                                        foodMeasurement = foodMeasurementToSave,
-                                        foodCook = foodCookToSave,
-                                        foodExtra = foodExtraToSave,
-                                        estimatedTime = timeCalculated.intValue
-                                    )
-                                    MyApplication.database.savedConfigDao().insert(savedConfig)
-                                }
-                            }
-                            scope.launch {
-                                page.animateScrollToPage(0)
-                            }
-                            selectedFood.value = "Seleccione alimento"
-                            selectedMeasurement = "Tipo de medición"
-                            selectedCook.value = "Tipo de cocción"
-                            selectedPotato.value = "Tamaño de papa"
-                            inputNumber.value = ""
-                            calculateState = false
-                            checked = false
-                            selectedRice.value = "Cantidad"
-                            selectedSpaghetti.value = "Textura"
                         }
+
+                        Spacer(modifier = Modifier.padding(0.dp, 0.dp, screenWidth / 50, 0.dp))
+
+                        Text(text = "${timeCalculated.intValue} min")
+
+                        Spacer(modifier = Modifier.padding(screenWidth / 50, 0.dp, 0.dp, 0.dp))
+
+                        Button(
+                            onClick = { timeCalculated.value += 1 },
+                            colors = ButtonColors(Color.White, DarkGray, Color.White, SpinachGreen),
+                            border = BorderStroke(3.dp, SpinachGreen)
+                        ) {
+                            Text(
+                                text = "+1",
+                                color = DarkGray
+                            )
+                        }
+                    }
+
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Text(text = "Programar alarma")
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(end = 13.dp)
+                        ) {
+                            Checkbox(
+                                checked = checked,
+                                onCheckedChange = { checked = it }
+                            )
+                            Text(text = "Recordar alimento")
+                        }
+                        Button(
+                            onClick = {
+                                val currentTime = LocalTime.now()
+                                val alarmTime =
+                                    currentTime.plusMinutes(timeCalculated.intValue.toLong())
+                                createAlarm(
+                                    context = context,
+                                    hour = alarmTime.hour,
+                                    minutes = alarmTime.minute,
+                                    message = selectedFood.value
+                                )
+
+                                if (checked) {
+                                    val foodNameToSave = selectedFood.value
+                                    val foodQuantityToSave = inputNumber.value
+                                    val foodMeasurementToSave = selectedMeasurement
+                                    val foodCookToSave = selectedCook.value
+                                    val foodExtraToSave = foodExtra
+                                    scope.launch {
+                                        val savedConfig = SavedConfig(
+                                            foodName = foodNameToSave,
+                                            foodQuantity = foodQuantityToSave,
+                                            foodMeasurement = foodMeasurementToSave,
+                                            foodCook = foodCookToSave,
+                                            foodExtra = foodExtraToSave,
+                                            estimatedTime = timeCalculated.intValue
+                                        )
+                                        MyApplication.database.savedConfigDao().insert(savedConfig)
+                                    }
+                                }
+                                scope.launch {
+                                    page.animateScrollToPage(0)
+                                }
+                                selectedFood.value = "Seleccione alimento"
+                                selectedMeasurement = "Tipo de medición"
+                                selectedCook.value = "Tipo de cocción"
+                                selectedPotato.value = "Tamaño de papa"
+                                inputNumber.value = ""
+                                calculateState = false
+                                checked = false
+                                selectedRice.value = "Cantidad"
+                                selectedSpaghetti.value = "Textura"
+                            },
+                            colors = ButtonColors(SpinachGreen, Color.White, Color.White, SpinachGreen),
+                            modifier = Modifier.width(screenWidth / 2)
+                        ) {
+                            Text(
+                                text = "Programar alarma",
+                                color = DarkGray
+                            )
+                        }
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.padding(dynamicHeightPadding))
-
-            Button(
-                onClick = {
-                    selectedFood.value = "Seleccione alimento"
-                    selectedMeasurement = "Tipo de medición"
-                    selectedCook.value = "Tipo de cocción"
-                    selectedPotato.value = "Tamaño de papa"
-                    inputNumber.value = ""
-                    calculateState = false
-                    checked = false
-                    selectedRice.value = "Cantidad"
-                },
-                colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
-                border = BorderStroke(3.dp, lightGreen),
-                modifier = Modifier.width(screenWidth / 2)
-            ) {
-                Text(text = "Restablecer valores")
+            item {
+                Button(
+                    onClick = {
+                        selectedFood.value = "Seleccione alimento"
+                        selectedMeasurement = "Tipo de medición"
+                        selectedCook.value = "Tipo de cocción"
+                        selectedPotato.value = "Tamaño de papa"
+                        inputNumber.value = ""
+                        calculateState = false
+                        checked = false
+                        selectedRice.value = "Cantidad"
+                        timeCalculated.intValue = 0
+                    },
+                    colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
+                    border = BorderStroke(3.dp, SpinachGreen),
+                    modifier = Modifier
+                        .width(screenWidth / 2)
+                ) {
+                    Text(text = "Restablecer valores")
+                }
             }
         }
     }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
@@ -35,7 +36,8 @@ import com.asflum.cocina.FoodViewModelFactory
 import com.asflum.cocina.MyApplication
 import com.asflum.cocina.R
 import com.asflum.cocina.createAlarm
-import com.asflum.cocina.ui.theme.lightGreen
+import com.asflum.cocina.ui.theme.DarkGray
+import com.asflum.cocina.ui.theme.SpinachGreen
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 
@@ -94,8 +96,9 @@ fun Page1() {
                             }
                         },
                         colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
-                        border = BorderStroke(3.dp, lightGreen),
-                        modifier = Modifier.width(screenWidth / 1.5f)
+                        border = BorderStroke(3.dp, SpinachGreen),
+                        modifier = Modifier.width(screenWidth / 1.5f),
+                        shape = RoundedCornerShape(8.dp)
                     ) {
                         when (food.foodName) {
                             "Arroz blanco" -> {
@@ -120,8 +123,6 @@ fun Page1() {
                                     foodViewModel.getAllFoodInfo()
                                 }
                             },
-//                        modifier = Modifier
-//                            .padding(screenWidth / 20, 0.dp, 0.dp, 0.dp)
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.tacho_01),
@@ -142,9 +143,12 @@ fun Page1() {
                         }
                     },
                     modifier = Modifier.width(screenWidth / 2),
-                    colors = ButtonColors(lightGreen, Color.White, Color.White, lightGreen)
+                    colors = ButtonColors(SpinachGreen, Color.White, Color.White, SpinachGreen)
                 ) {
-                    Text(text = "Borrar todo")
+                    Text(
+                        text = "Borrar todo",
+                        color = DarkGray
+                    )
                 }
             }
         }
