@@ -1,6 +1,5 @@
 package com.asflum.cocina.pages.page2
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -63,7 +61,6 @@ fun Page2(page: PagerState,
     val selectedPotato by viewModel.selectedPotato.collectAsState()
     val optionsPotato = listOf("Grande", "Mediana", "Pequeña")
     val sizesPotato = mapOf("Grande" to 30, "Mediana" to 20, "Pequeña" to 10)
-    val cookPotato = mapOf("Hervido" to 0, "Vapor" to 5)
 
     // variables de Arroz blanco
     val expandedRice = remember { mutableStateOf(false) }
@@ -115,7 +112,6 @@ fun Page2(page: PagerState,
     val selectedCook by viewModel.selectedCook.collectAsState()
     val optionsCook = listOf("Hervido", "Vapor")
 
-//    val timeCalculated = remember { mutableIntStateOf(0) }
     val timeCalculated by viewModel.timeCalculated.collectAsState()
 
     val inputNumber = remember { mutableStateOf("") }
@@ -167,8 +163,13 @@ fun Page2(page: PagerState,
                         value = inputNumber.value,
                         onValueChange = { newValue ->
                             // Filtrar solo los caracteres numéricos
-                            if (newValue.all { it.isDigit() || it == '.' } && newValue.count { it == '.' } <= 1) {
+                            if (newValue.isEmpty()) {
                                 inputNumber.value = newValue
+                            } else if (newValue.matches(Regex("^\\d*\\.?\\d*$")) && newValue.count { it == '.' } <= 1) {
+                                // Verifica que el punto no sea el primer carácter
+                                if (newValue.first() != '.') {
+                                    inputNumber.value = newValue
+                                }
                             }
                             optionsRice.clear()
                             viewModel.updateSelectedRice("Cantidad")
@@ -271,22 +272,18 @@ fun Page2(page: PagerState,
                             expandedPotato,
                             selectedPotato,
                             optionsPotato,
-                            timeCalculated,
-                            optionsCook = selectedCook,
-                            cookPotato = cookPotato,
                             sizesPotato = sizesPotato,
                             viewModel = viewModel
                         )
                     }
                 }
-                "Arroz Blanco" -> {
+                "Arroz blanco" -> {
                     item {
                         MyRow(
                             "Tazas de agua:",
                             expandedRice,
                             selectedRice,
                             optionsRice,
-                            timeCalculated,
                             inputNumber.value,
                             viewModel = viewModel
                         )
@@ -299,7 +296,6 @@ fun Page2(page: PagerState,
                             expandedSpaghetti,
                             selectedSpaghetti,
                             optionsSpaghetti,
-                            timeCalculated,
                             viewModel = viewModel
                         )
                     }
@@ -313,8 +309,6 @@ fun Page2(page: PagerState,
                             expandedCook,
                             selectedCook,
                             optionsCook,
-                            timeCalculated,
-                            cookPotato = cookPotato,
                             sizesPotato = sizesPotato,
                             viewModel = viewModel
                         )
@@ -341,8 +335,6 @@ fun Page2(page: PagerState,
                             expandedCook,
                             selectedCook,
                             optionsCook,
-                            timeCalculated,
-                            cookPotato = cookPotato,
                             sizesPotato = sizesPotato,
                             viewModel = viewModel
                         )
@@ -505,6 +497,7 @@ fun Page2(page: PagerState,
                         viewModel.updateSelectedCook("Tipo de cocción")
                         viewModel.updateSelectedPotato("Tamaño de papa")
                         viewModel.updateSelectedRice("Cantidad")
+                        viewModel.updateSelectedSpaghetti("Textura")
                         inputNumber.value = ""
                         calculateState = false
                         checked = false

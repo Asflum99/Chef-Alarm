@@ -61,10 +61,10 @@ class Page2ViewModel: ViewModel() {
         _timeCalculated.value += (_timeCalculated.value * 20) / 100
     }
 
-    fun riceTimeCalculated(selected: String, options: List<String>) {
-        _timeCalculated.value = when (selected) {
+    fun riceTimeCalculated(option: String, options: List<String>) {
+        _timeCalculated.value = when (option) {
             options[0] -> {
-                10
+                11
             }
             options[1] -> {
                 15
@@ -75,8 +75,8 @@ class Page2ViewModel: ViewModel() {
         }
     }
 
-    fun spaghettiTimeCalculated(selected: String) {
-        _timeCalculated.value = when (selected) {
+    fun spaghettiTimeCalculated(option: String) {
+        _timeCalculated.value = when (option) {
             "Al dente" -> {
                 8
             }
