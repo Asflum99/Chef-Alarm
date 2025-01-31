@@ -2,6 +2,7 @@ package com.asflum.cocina
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.asflum.cocina.pages.page1.FoodViewModel
 
 class FoodViewModelFactory(private val savedConfigDao: SavedConfigDao) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")

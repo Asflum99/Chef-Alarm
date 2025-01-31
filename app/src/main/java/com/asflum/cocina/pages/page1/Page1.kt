@@ -1,4 +1,4 @@
-package com.asflum.cocina.pages
+package com.asflum.cocina.pages.page1
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +31,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asflum.cocina.AppDatabase
-import com.asflum.cocina.FoodViewModel
 import com.asflum.cocina.FoodViewModelFactory
 import com.asflum.cocina.MyApplication
 import com.asflum.cocina.R

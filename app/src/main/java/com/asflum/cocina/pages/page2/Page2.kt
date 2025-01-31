@@ -1,5 +1,6 @@
-package com.asflum.cocina.pages
+package com.asflum.cocina.pages.page2
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +25,8 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asflum.cocina.MyApplication
 import com.asflum.cocina.MyRow
 import com.asflum.cocina.SavedConfig
@@ -49,7 +53,28 @@ import kotlinx.coroutines.launch
 import java.time.LocalTime
 
 @Composable
-fun Page2(page: PagerState) {
+fun Page2(page: PagerState,
+          viewModel: Page2ViewModel = viewModel()
+) {
+    var foodExtra by remember { mutableStateOf("") }
+
+    // variables de Papa
+    val expandedPotato = remember { mutableStateOf(false) }
+    val selectedPotato by viewModel.selectedPotato.collectAsState()
+    val optionsPotato = listOf("Grande", "Mediana", "Pequeña")
+    val sizesPotato = mapOf("Grande" to 30, "Mediana" to 20, "Pequeña" to 10)
+    val cookPotato = mapOf("Hervido" to 0, "Vapor" to 5)
+
+    // variables de Arroz blanco
+    val expandedRice = remember { mutableStateOf(false) }
+    val selectedRice by viewModel.selectedRice.collectAsState()
+    val optionsRice = remember { mutableListOf<String>() }
+    val multipliers = listOf(1, 1.5, 2)
+
+    // variables de Espaguetis
+    val expandedSpaghetti = remember { mutableStateOf(false) }
+    val selectedSpaghetti by viewModel.selectedSpaghetti.collectAsState()
+    val optionsSpaghetti = listOf("Al dente", "Suave")
 
     // Ancho de pantalla
     val configuration = LocalConfiguration.current
@@ -60,36 +85,38 @@ fun Page2(page: PagerState) {
 
     // variables de Alimento
     val expandedFood = remember { mutableStateOf(false) }
-    val selectedFood = remember { mutableStateOf("Seleccione alimento") }
+    val selectedFood by viewModel.selectedFood.collectAsState()
     val optionsFood = listOf("Papa", "Arroz blanco", "Espaguetis")
 
     // variables de Medición
-    var selectedMeasurement by remember { mutableStateOf("Tipo de medición") }
+    val selectedMeasurement by viewModel.selectedMeasurement.collectAsState()
+    // Efecto que se ejecuta cuando selectedFood cambia
+    LaunchedEffect(selectedFood) {
+        when (selectedFood) {
+            "Papa" -> {
+                viewModel.updateSelectedMeasurement("Unidad")
+                foodExtra = selectedPotato
+            }
+            "Arroz blanco" -> {
+                viewModel.updateSelectedMeasurement("Vasos")
+                viewModel.updateSelectedCook("Hervido")
+                foodExtra = selectedRice
+            }
+            "Espaguetis" -> {
+                viewModel.updateSelectedMeasurement("Gramos")
+                viewModel.updateSelectedCook("Hervido")
+                foodExtra = selectedSpaghetti
+            }
+        }
+    }
 
     // variables de Cocción
     val expandedCook = remember { mutableStateOf(false) }
-    val selectedCook = remember { mutableStateOf("Tipo de cocción") }
+    val selectedCook by viewModel.selectedCook.collectAsState()
     val optionsCook = listOf("Hervido", "Vapor")
 
-    // variables de Papa
-    val expandedPotato = remember { mutableStateOf(false) }
-    val selectedPotato = remember { mutableStateOf("Tamaño de papa") }
-    val optionsPotato = listOf("Grande", "Mediana", "Pequeña")
-    val sizesPotato = mapOf("Grande" to 30, "Mediana" to 20, "Pequeña" to 10)
-    val cookPotato = mapOf("Hervido" to 0, "Vapor" to 5)
-
-    // variables de Arroz blanco
-    val expandedRice = remember { mutableStateOf(false) }
-    val selectedRice = remember { mutableStateOf("Cantidad") }
-    val optionsRice = remember { mutableListOf<String>() }
-    val multipliers = listOf(1, 1.5, 2)
-
-    // variables de Espaguetis
-    val expandedSpaghetti = remember { mutableStateOf(false) }
-    val selectedSpaghetti = remember { mutableStateOf("Textura") }
-    val optionsSpaghetti = listOf("Al dente", "Suave")
-
-    val timeCalculated = remember { mutableIntStateOf(0) }
+//    val timeCalculated = remember { mutableIntStateOf(0) }
+    val timeCalculated by viewModel.timeCalculated.collectAsState()
 
     val inputNumber = remember { mutableStateOf("") }
 
@@ -107,8 +134,6 @@ fun Page2(page: PagerState) {
 
     val scope = rememberCoroutineScope()
 
-    var foodExtra by remember { mutableStateOf("") }
-
     Box(modifier = Modifier
         .fillMaxSize()
         .pointerInput(Unit) {
@@ -124,10 +149,11 @@ fun Page2(page: PagerState) {
         ) {
             item {
                 MyRow(
-                    text = "Alimento:",
-                    expanded = expandedFood,
-                    selected = selectedFood,
-                    options = optionsFood
+                    "Alimento:",
+                    expandedFood,
+                    selectedFood,
+                    optionsFood,
+                    viewModel = viewModel
                 )
             }
             item {
@@ -145,7 +171,7 @@ fun Page2(page: PagerState) {
                                 inputNumber.value = newValue
                             }
                             optionsRice.clear()
-                            selectedRice.value = "Cantidad"
+                            viewModel.updateSelectedRice("Cantidad")
                             if (inputNumber.value != "") {
                                 for (multiplier in multipliers) {
                                     optionsRice.add((inputNumber.value.toDouble() * multiplier.toDouble()).toString())
@@ -162,7 +188,7 @@ fun Page2(page: PagerState) {
 
                     Spacer(modifier = Modifier.padding(dynamicWidthPadding))
 
-                    when (selectedFood.value) {
+                    when (selectedFood) {
                         "Papa" -> {
                             Button(
                                 enabled = false,
@@ -237,57 +263,51 @@ fun Page2(page: PagerState) {
                     }
                 }
             }
-            item {
-                when (selectedFood.value) {
-                    "Papa" -> {
+            when (selectedFood) {
+                "Papa" -> {
+                    item {
                         MyRow(
                             "Tamaño de papa:",
                             expandedPotato,
                             selectedPotato,
                             optionsPotato,
                             timeCalculated,
-                            optionsCook = selectedCook.value,
+                            optionsCook = selectedCook,
                             cookPotato = cookPotato,
-                            sizesPotato = sizesPotato
+                            sizesPotato = sizesPotato,
+                            viewModel = viewModel
                         )
-
-                        selectedMeasurement = "Unidad"
-                        foodExtra = selectedPotato.value
                     }
-
-                    "Arroz blanco" -> {
+                }
+                "Arroz Blanco" -> {
+                    item {
                         MyRow(
                             "Tazas de agua:",
                             expandedRice,
                             selectedRice,
                             optionsRice,
                             timeCalculated,
-                            inputNumber.value
+                            inputNumber.value,
+                            viewModel = viewModel
                         )
-
-                        selectedMeasurement = "Vasos"
-                        selectedCook.value = "Hervido"
-                        foodExtra = selectedRice.value
                     }
-
-                    "Espaguetis" -> {
+                }
+                "Espaguetis" -> {
+                    item {
                         MyRow(
                             "Textura:",
                             expandedSpaghetti,
                             selectedSpaghetti,
                             optionsSpaghetti,
-                            timeCalculated
+                            timeCalculated,
+                            viewModel = viewModel
                         )
-
-                        selectedMeasurement = "Gramos"
-                        selectedCook.value = "Hervido"
-                        foodExtra = selectedSpaghetti.value
                     }
                 }
             }
-            item {
-                when (selectedFood.value) {
-                    "Papa" -> {
+            when (selectedFood) {
+                "Papa" -> {
+                    item {
                         MyRow(
                             "Cocción:",
                             expandedCook,
@@ -295,29 +315,36 @@ fun Page2(page: PagerState) {
                             optionsCook,
                             timeCalculated,
                             cookPotato = cookPotato,
-                            sizesPotato = sizesPotato
+                            sizesPotato = sizesPotato,
+                            viewModel = viewModel
                         )
                         Spacer(modifier = Modifier.padding(dynamicHeightPadding))
                     }
-
-                    "Espaguetis" -> {
+                }
+                "Espaguetis" -> {
+                    item {
                         MyRow(
                             text = "Cocción:",
                             expanded = expandedCook,
                             selected = selectedCook,
                             options = optionsCook,
-                            input = "Espaguetis"
+                            input = "Espaguetis",
+                            viewModel = viewModel
                         )
                         Spacer(modifier = Modifier.padding(dynamicHeightPadding))
                     }
-
-                    "Arroz blanco" -> {
+                }
+                "Arroz blanco" -> {
+                    item {
                         MyRow(
-                            text = "Cocción:",
-                            expanded = expandedCook,
-                            selected = selectedCook,
-                            options = optionsCook,
-                            input = "Arroz blanco"
+                            "Cocción:",
+                            expandedCook,
+                            selectedCook,
+                            optionsCook,
+                            timeCalculated,
+                            cookPotato = cookPotato,
+                            sizesPotato = sizesPotato,
+                            viewModel = viewModel
                         )
                         Spacer(modifier = Modifier.padding(dynamicHeightPadding))
                     }
@@ -326,7 +353,7 @@ fun Page2(page: PagerState) {
             item {
                 Button(
                     onClick = {
-                        if (selectedFood.value == "Seleccione alimento") {
+                        if (selectedFood == "Seleccione alimento") {
                             showError = true
                             errorMessage = "Por favor, seleccione un alimento"
                         } else if (inputNumber.value.isEmpty()) {
@@ -335,10 +362,10 @@ fun Page2(page: PagerState) {
                         } else if (selectedMeasurement == "Tipo de medición") {
                             showError = true
                             errorMessage = "Por favor, seleccione un tipo de medición"
-                        } else if (selectedCook.value == "Tipo de cocción") {
+                        } else if (selectedCook == "Tipo de cocción") {
                             showError = true
                             errorMessage = "Por favor, seleccione un tipo de cocción"
-                        } else if (selectedFood.value == "Papa" && selectedPotato.value == "Tamaño de papa") {
+                        } else if (selectedFood == "Papa" && selectedPotato == "Tamaño de papa") {
                             showError = true
                             errorMessage = "Por favor, seleccione un tamaño de papa"
                         } else {
@@ -372,11 +399,9 @@ fun Page2(page: PagerState) {
                 if (calculateState) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-//                        modifier = Modifier
-//                            .align(Alignment.CenterHorizontally)
                     ) {
                         Button(
-                            onClick = { timeCalculated.value -= 1 },
+                            onClick = { viewModel.minusTimeCalculated() },
                             colors = ButtonColors(Color.White, DarkGray, Color.White, SpinachGreen),
                             border = BorderStroke(3.dp, SpinachGreen)
                         ) {
@@ -388,12 +413,12 @@ fun Page2(page: PagerState) {
 
                         Spacer(modifier = Modifier.padding(0.dp, 0.dp, screenWidth / 50, 0.dp))
 
-                        Text(text = "${timeCalculated.intValue} min")
+                        Text(text = "$timeCalculated min")
 
                         Spacer(modifier = Modifier.padding(screenWidth / 50, 0.dp, 0.dp, 0.dp))
 
                         Button(
-                            onClick = { timeCalculated.value += 1 },
+                            onClick = { viewModel.plusTimeCalculated() },
                             colors = ButtonColors(Color.White, DarkGray, Color.White, SpinachGreen),
                             border = BorderStroke(3.dp, SpinachGreen)
                         ) {
@@ -422,19 +447,19 @@ fun Page2(page: PagerState) {
                             onClick = {
                                 val currentTime = LocalTime.now()
                                 val alarmTime =
-                                    currentTime.plusMinutes(timeCalculated.intValue.toLong())
+                                    currentTime.plusMinutes(timeCalculated.toLong())
                                 createAlarm(
                                     context = context,
                                     hour = alarmTime.hour,
                                     minutes = alarmTime.minute,
-                                    message = selectedFood.value
+                                    message = selectedFood
                                 )
 
                                 if (checked) {
-                                    val foodNameToSave = selectedFood.value
+                                    val foodNameToSave = selectedFood
                                     val foodQuantityToSave = inputNumber.value
                                     val foodMeasurementToSave = selectedMeasurement
-                                    val foodCookToSave = selectedCook.value
+                                    val foodCookToSave = selectedCook
                                     val foodExtraToSave = foodExtra
                                     scope.launch {
                                         val savedConfig = SavedConfig(
@@ -443,7 +468,7 @@ fun Page2(page: PagerState) {
                                             foodMeasurement = foodMeasurementToSave,
                                             foodCook = foodCookToSave,
                                             foodExtra = foodExtraToSave,
-                                            estimatedTime = timeCalculated.intValue
+                                            estimatedTime = timeCalculated
                                         )
                                         MyApplication.database.savedConfigDao().insert(savedConfig)
                                     }
@@ -451,15 +476,15 @@ fun Page2(page: PagerState) {
                                 scope.launch {
                                     page.animateScrollToPage(0)
                                 }
-                                selectedFood.value = "Seleccione alimento"
-                                selectedMeasurement = "Tipo de medición"
-                                selectedCook.value = "Tipo de cocción"
-                                selectedPotato.value = "Tamaño de papa"
+                                viewModel.updateSelectedFood("Seleccione alimento")
+                                viewModel.updateSelectedMeasurement("Tipo de medición")
+                                viewModel.updateSelectedCook("Tipo de cocción")
+                                viewModel.updateSelectedPotato("Tamaño de papa")
+                                viewModel.updateSelectedRice("Cantidad")
+                                viewModel.updateSelectedSpaghetti("Textura")
                                 inputNumber.value = ""
                                 calculateState = false
                                 checked = false
-                                selectedRice.value = "Cantidad"
-                                selectedSpaghetti.value = "Textura"
                             },
                             colors = ButtonColors(SpinachGreen, Color.White, Color.White, SpinachGreen),
                             modifier = Modifier.width(screenWidth / 2)
@@ -475,15 +500,15 @@ fun Page2(page: PagerState) {
             item {
                 Button(
                     onClick = {
-                        selectedFood.value = "Seleccione alimento"
-                        selectedMeasurement = "Tipo de medición"
-                        selectedCook.value = "Tipo de cocción"
-                        selectedPotato.value = "Tamaño de papa"
+                        viewModel.updateSelectedFood("Seleccione alimento")
+                        viewModel.updateSelectedMeasurement("Tipo de medición")
+                        viewModel.updateSelectedCook("Tipo de cocción")
+                        viewModel.updateSelectedPotato("Tamaño de papa")
+                        viewModel.updateSelectedRice("Cantidad")
                         inputNumber.value = ""
                         calculateState = false
                         checked = false
-                        selectedRice.value = "Cantidad"
-                        timeCalculated.intValue = 0
+                        viewModel.timeCalculatedToZero()
                     },
                     colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
                     border = BorderStroke(3.dp, SpinachGreen),

@@ -46,10 +46,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asflum.cocina.ui.theme.CocinaTheme
 import kotlinx.coroutines.launch
-import com.asflum.cocina.pages.Page1
-import com.asflum.cocina.pages.Page2
+import com.asflum.cocina.pages.page1.Page1
+import com.asflum.cocina.pages.page2.Page2
+import com.asflum.cocina.pages.page2.Page2ViewModel
 import com.asflum.cocina.ui.theme.MustardYellow
 import com.asflum.cocina.ui.theme.SpinachGreen
 import com.asflum.cocina.ui.theme.WarmWhite
@@ -88,18 +90,15 @@ fun createAlarm(
 fun MyRow(
     text: String,
     expanded: MutableState<Boolean>,
-    selected: MutableState<String>,
+    selected: String,
     options: List<String>,
-    time: MutableState<Int> = mutableIntStateOf(0),
+    time: Int? = null,
     input: String? = null,
     optionsCook: String? = null,
     cookPotato: Map<String, Int> = emptyMap(),
     sizesPotato: Map<String, Int> = emptyMap(),
+    viewModel: Page2ViewModel
 ) {
-    // Variables de papa
-    println(cookPotato)
-    println(sizesPotato)
-
     // variables de Error
     var showError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
@@ -147,7 +146,7 @@ fun MyRow(
                 border = BorderStroke(3.dp, SpinachGreen),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text(text = selected.value)
+                Text(text = selected)
             }
             if (showError) {
                 AlertDialog(
@@ -169,50 +168,44 @@ fun MyRow(
                     DropdownMenuItem(
                         text = { Text(text = option) },
                         onClick = {
-                            println(cookPotato)
-                            println(sizesPotato)
-                            selected.value = option
+                            when (text) {
+                                "Alimento:" -> {
+                                    viewModel.updateSelectedFood(option)
+                                }
+                                "Tamaño de papa:" -> {
+                                    viewModel.updateSelectedPotato(option)
+                                }
+                                "Tazas de agua:" -> {
+                                    viewModel.updateSelectedRice(option)
+                                }
+                                "Textura:" -> {
+                                    viewModel.updateSelectedSpaghetti(option)
+                                }
+                                "Cocción:" -> {
+                                    viewModel.updateSelectedCook(option)
+                                }
+                            }
                             expanded.value = false
                             if (text == "Tamaño de papa:") {
-                                when (selected.value) {
+                                when (selected) {
                                     "Grande" -> {
-                                        time.value += sizesPotato["Grande"] ?: 0
+                                        viewModel.setTimeCalculated(sizesPotato["Grande"] ?: 0)
                                     }
                                     "Mediana" -> {
-                                        time.value += sizesPotato["Mediana"] ?: 0
+                                        viewModel.setTimeCalculated(sizesPotato["Mediana"] ?: 0)
                                     }
                                     else -> {
-                                        time.value += sizesPotato["Pequeña"] ?: 0
+                                        viewModel.setTimeCalculated(sizesPotato["Pequeña"] ?: 0)
                                     }
                                 }
                             } else if (text == "Cocción:") {
-                                if (selected.value == "Vapor") {
-                                    time.value += (time.value * 20) / 100
+                                if (selected == "Vapor") {
+                                    viewModel.changeTimeCalculated()
                                 }
                             } else if (text == "Tazas de agua:") {
-                                time.value = when (selected.value) {
-                                    options[0] -> {
-                                        10
-                                    }
-
-                                    options[1] -> {
-                                        15
-                                    }
-
-                                    else -> {
-                                        18
-                                    }
-                                }
+                                viewModel.riceTimeCalculated(selected, options)
                             } else if (text == "Textura:") {
-                                time.value = when (selected.value) {
-                                    "Al dente" -> {
-                                        8
-                                    }
-
-                                    else -> {
-                                        10
-                                    }
-                                }
+                                viewModel.spaghettiTimeCalculated(selected)
                             }
                         }
                     )
@@ -277,7 +270,7 @@ fun NavigationComponent() {
         ) { page ->
             when (page) {
                 0 -> Page1()
-                1 -> Page2(pagerState)
+                1 -> Page2(pagerState, Page2ViewModel())
             }
         }
     }
