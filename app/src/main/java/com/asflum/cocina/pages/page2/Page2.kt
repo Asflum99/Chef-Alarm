@@ -20,8 +20,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,10 +44,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asflum.cocina.MyApplication
-import com.asflum.cocina.MyRow
 import com.asflum.cocina.SavedConfig
 import com.asflum.cocina.createAlarm
 import com.asflum.cocina.ui.theme.DarkGray
+import com.asflum.cocina.ui.theme.DarkSpinachGreen
+import com.asflum.cocina.ui.theme.LightSpinachGreen
 import com.asflum.cocina.ui.theme.SpinachGreen
 import kotlinx.coroutines.launch
 import java.time.LocalTime
@@ -184,7 +187,11 @@ fun Page2(page: PagerState,
                             keyboardType = KeyboardType.Number
                         ),
                         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = SpinachGreen,
+                            focusedLabelColor = DarkSpinachGreen
+                        )
                     )
 
                     Spacer(modifier = Modifier.padding(dynamicWidthPadding))
@@ -275,6 +282,7 @@ fun Page2(page: PagerState,
                             sizesPotato = sizesPotato,
                             viewModel = viewModel
                         )
+                        Spacer(modifier = Modifier.padding(bottom = dynamicHeightPadding))
                     }
                 }
                 "Arroz blanco" -> {
@@ -287,6 +295,7 @@ fun Page2(page: PagerState,
                             inputNumber.value,
                             viewModel = viewModel
                         )
+                        Spacer(modifier = Modifier.padding(bottom = dynamicHeightPadding))
                     }
                 }
                 "Espaguetis" -> {
@@ -298,6 +307,7 @@ fun Page2(page: PagerState,
                             optionsSpaghetti,
                             viewModel = viewModel
                         )
+                        Spacer(modifier = Modifier.padding(bottom = dynamicHeightPadding))
                     }
                 }
             }
@@ -312,7 +322,7 @@ fun Page2(page: PagerState,
                             sizesPotato = sizesPotato,
                             viewModel = viewModel
                         )
-                        Spacer(modifier = Modifier.padding(dynamicHeightPadding))
+                        Spacer(modifier = Modifier.padding(bottom = dynamicHeightPadding))
                     }
                 }
                 "Espaguetis" -> {
@@ -325,7 +335,7 @@ fun Page2(page: PagerState,
                             input = "Espaguetis",
                             viewModel = viewModel
                         )
-                        Spacer(modifier = Modifier.padding(dynamicHeightPadding))
+                        Spacer(modifier = Modifier.padding(bottom = dynamicHeightPadding))
                     }
                 }
                 "Arroz blanco" -> {
@@ -338,7 +348,7 @@ fun Page2(page: PagerState,
                             sizesPotato = sizesPotato,
                             viewModel = viewModel
                         )
-                        Spacer(modifier = Modifier.padding(dynamicHeightPadding))
+                        Spacer(modifier = Modifier.padding(bottom = dynamicHeightPadding))
                     }
                 }
             }
@@ -373,24 +383,31 @@ fun Page2(page: PagerState,
                     )
                 }
             }
-            item {
-                if (showError) {
+            if (showError) {
+                item {
                     AlertDialog(
                         onDismissRequest = { showError = false },
                         title = { Text("Error") },
                         text = { Text(errorMessage) },
                         confirmButton = {
-                            Button(onClick = { showError = false }) {
+                            Button(
+                                onClick = { showError = false },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = DarkSpinachGreen
+                                )
+                            ) {
                                 Text("Ok")
                             }
-                        }
+                        },
+                        containerColor = LightSpinachGreen
                     )
                 }
             }
-            item {
-                if (calculateState) {
+            if (calculateState) {
+                item {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(screenWidth / 50)
                     ) {
                         Button(
                             onClick = { viewModel.minusTimeCalculated() },
@@ -403,11 +420,7 @@ fun Page2(page: PagerState,
                             )
                         }
 
-                        Spacer(modifier = Modifier.padding(0.dp, 0.dp, screenWidth / 50, 0.dp))
-
                         Text(text = "$timeCalculated min")
-
-                        Spacer(modifier = Modifier.padding(screenWidth / 50, 0.dp, 0.dp, 0.dp))
 
                         Button(
                             onClick = { viewModel.plusTimeCalculated() },
