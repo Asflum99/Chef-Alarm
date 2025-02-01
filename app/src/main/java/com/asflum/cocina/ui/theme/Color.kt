@@ -13,6 +13,7 @@ val Pink40 = Color(0xFF7D5260)
 // Paleta de colores
 val TomatoRed = Color(0xFFFF6F61)
 val MustardYellow = Color(0xFFFFD166)
+val LightMustardYellow = Color(0xFFFFF4D6)
 val SpinachGreen = Color(0xFF06D6A0)
 val LightSpinachGreen = Color(0xFFD6F2E5)
 val DarkSpinachGreen = Color(0xFF049C7D)

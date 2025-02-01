@@ -1,21 +1,24 @@
 package com.asflum.cocina.pages.page1
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +39,9 @@ import com.asflum.cocina.MyApplication
 import com.asflum.cocina.R
 import com.asflum.cocina.createAlarm
 import com.asflum.cocina.ui.theme.DarkGray
+import com.asflum.cocina.ui.theme.DarkSpinachGreen
+import com.asflum.cocina.ui.theme.LightMustardYellow
+import com.asflum.cocina.ui.theme.MustardYellow
 import com.asflum.cocina.ui.theme.SpinachGreen
 import kotlinx.coroutines.launch
 import java.time.LocalTime
@@ -47,8 +53,6 @@ fun Page1() {
     val savedConfigDao = AppDatabase.getInstance(context).savedConfigDao()
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
-    val screenHeight = configuration.screenHeightDp.dp
-    val dynamicHeightPadding = screenHeight / 120
 
     val foodViewModel: FoodViewModel = viewModel(
         factory = FoodViewModelFactory(savedConfigDao)
@@ -64,76 +68,176 @@ fun Page1() {
     }
 
     // Mostrar la columna con cada alimento
-    Box(
+    Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(screenWidth / 24)
+                .weight(0.8f)
         ) {
-            items(foodList) { food ->
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Button(
-                        onClick = {
-                            coroutineScope.launch {
-                                val currentTime = LocalTime.now()
-                                val alarmTime =
-                                    currentTime.plusMinutes(food.estimatedTime.toLong())
-                                createAlarm(
-                                    context = context,
-                                    hour = alarmTime.hour,
-                                    minutes = alarmTime.minute,
-                                    message = food.foodName
-                                )
-                            }
-                        },
-                        colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
-                        border = BorderStroke(3.dp, SpinachGreen),
-                        modifier = Modifier.width(screenWidth / 1.5f),
-                        shape = RoundedCornerShape(8.dp)
-                    ) {
-                        when (food.foodName) {
-                            "Arroz blanco" -> {
-                                Text(text = "${food.foodQuantity} tazas de arroz blanco con ${food.foodExtra} tazas de agua")
-                            }
-                            "Espaguetis" -> {
-                                Text(text = "${food.foodQuantity} gramos de espaguetis de textura ${food.foodExtra?.lowercase()}")
-                            }
-                            else -> {
-                                Text(text = "${food.foodQuantity} papas de tamaño ${food.foodExtra?.lowercase()}. Cocción: ${food.foodCook}")
-                            }
-                        }
-                    }
-                    Row(
-                        horizontalArrangement = Arrangement.End,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        IconButton(
-                            onClick = {
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 150.dp),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(10.dp)
+            ) {
+                items(foodList.size) {food ->
+                    Box(
+                        modifier = Modifier
+                            .aspectRatio(1f)
+                            .padding(5.dp)
+                            .border(width = 3.dp, color = DarkSpinachGreen, shape = RoundedCornerShape(8.dp))
+                            .clickable {
                                 coroutineScope.launch {
-                                    MyApplication.database.savedConfigDao().delete(food.id)
-                                    foodViewModel.getAllFoodInfo()
+                                    val currentTime = LocalTime.now()
+                                    val alarmTime =
+                                        currentTime.plusMinutes(foodList[food].estimatedTime.toLong())
+                                    createAlarm(
+                                        context = context,
+                                        hour = alarmTime.hour,
+                                        minutes = alarmTime.minute,
+                                        message = foodList[food].foodName
+                                    )
                                 }
                             },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.tacho_01),
-                                contentDescription = "Eliminar",
-                                tint = Color.Gray
-                            )
+                            when (foodList[food].foodName) {
+                                "Arroz blanco" -> {
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(0.25f)
+                                            .fillMaxWidth()
+                                            .background(LightMustardYellow),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "${foodList[food].foodQuantity} tazas"
+                                        )
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(0.5f)
+                                            .fillMaxWidth()
+                                            .background(LightMustardYellow),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.taza_de_arroz),
+                                            contentDescription = "Taza de arroz",
+                                            modifier = Modifier
+                                                .size(80.dp)
+                                        )
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(0.25f)
+                                            .fillMaxWidth()
+                                            .background(MustardYellow),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "${foodList[food].foodExtra} tazas de agua"
+                                        )
+                                    }
+                                }
+                                "Espaguetis" -> {
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(0.25f)
+                                            .fillMaxWidth()
+                                            .background(LightMustardYellow),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "${foodList[food].foodQuantity} gramos"
+                                        )
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(0.5f)
+                                            .fillMaxWidth()
+                                            .background(LightMustardYellow),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.olla_espaguetis),
+                                            contentDescription = "Olla con fideos",
+                                            modifier = Modifier
+                                                .size(100.dp)
+                                        )
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(0.25f)
+                                            .fillMaxWidth()
+                                            .background(MustardYellow),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "Textura: ${foodList[food].foodExtra}"
+                                        )
+                                    }
+
+                                }
+                                else -> {
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(0.25f)
+                                            .fillMaxWidth()
+                                            .background(LightMustardYellow),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "${foodList[food].foodQuantity} papas ${foodList[food].foodExtra?.lowercase()}"
+                                        )
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(0.5f)
+                                            .fillMaxWidth()
+                                            .background(LightMustardYellow),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.papa),
+                                            contentDescription = "Papa",
+                                            modifier = Modifier
+                                                .size(80.dp)
+                                        )
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(0.25f)
+                                            .fillMaxWidth()
+                                            .background(MustardYellow),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "Cocción: ${foodList[food].foodCook}"
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-                Spacer(modifier = Modifier.padding(dynamicHeightPadding))
             }
-            item {
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.2f)
+                .background(DarkSpinachGreen)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(screenWidth / 50),
+                modifier = Modifier.padding(screenWidth / 24)
+            ) {
                 Button(
                     onClick = {
                         coroutineScope.launch {
@@ -141,16 +245,23 @@ fun Page1() {
                             foodViewModel.getAllFoodInfo()
                         }
                     },
-                    modifier = Modifier.width(screenWidth / 2),
-                    colors = ButtonColors(SpinachGreen, Color.White, Color.White, SpinachGreen)
+                    colors = ButtonColors(Color.White, Color.White, Color.White, SpinachGreen)
                 ) {
                     Text(
-                        text = "Borrar todo",
+                        text = "Borrar todos los alimentos",
+                        color = DarkGray
+                    )
+                }
+                Button(
+                    onClick = {},
+                    colors = ButtonColors(Color.White, Color.White, Color.White, SpinachGreen)
+                ) {
+                    Text(
+                        text = "Borrar un alimento",
                         color = DarkGray
                     )
                 }
             }
         }
     }
-
 }
