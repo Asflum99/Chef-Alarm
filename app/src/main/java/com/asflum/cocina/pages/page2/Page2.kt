@@ -22,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -54,8 +55,9 @@ import kotlinx.coroutines.launch
 import java.time.LocalTime
 
 @Composable
-fun Page2(page: PagerState,
-          viewModel: Page2ViewModel = viewModel()
+fun Page2(
+    page: PagerState,
+    viewModel: Page2ViewModel = viewModel()
 ) {
     var foodExtra by remember { mutableStateOf("") }
 
@@ -64,6 +66,9 @@ fun Page2(page: PagerState,
     val selectedPotato by viewModel.selectedPotato.collectAsState()
     val optionsPotato = listOf("Grande", "Mediana", "Pequeña")
     val sizesPotato = mapOf("Grande" to 30, "Mediana" to 20, "Pequeña" to 10)
+    val expandedTypePotato = remember { mutableStateOf(false) }
+    val selectedTypePotato by viewModel.selectedTypePotato.collectAsState()
+    val optionsTypePotato = listOf("Blanca", "Amarilla")
 
     // variables de Arroz blanco
     val expandedRice = remember { mutableStateOf(false) }
@@ -97,11 +102,13 @@ fun Page2(page: PagerState,
                 viewModel.updateSelectedMeasurement("Unidad")
                 foodExtra = selectedPotato
             }
+
             "Arroz blanco" -> {
                 viewModel.updateSelectedMeasurement("Vasos")
                 viewModel.updateSelectedCook("Hervido")
                 foodExtra = selectedRice
             }
+
             "Espaguetis" -> {
                 viewModel.updateSelectedMeasurement("Gramos")
                 viewModel.updateSelectedCook("Hervido")
@@ -131,7 +138,7 @@ fun Page2(page: PagerState,
 
     val context = LocalContext.current
 
-    val scope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -158,7 +165,7 @@ fun Page2(page: PagerState,
             item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
+                    horizontalArrangement = Arrangement.spacedBy(dynamicWidthPadding * 2),
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
@@ -182,19 +189,27 @@ fun Page2(page: PagerState,
                                 }
                             }
                         },
-                        label = { Text("Ingrese cantidad") },
+                        label = {
+                            Box(
+                                modifier = Modifier.padding(
+                                    start = 0.dp,
+                                    top = 0.dp
+                                )
+                            ) {
+                                Text("Ingrese cantidad")
+                            }
+                        },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
                         ),
                         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(0.5f),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = SpinachGreen,
                             focusedLabelColor = DarkSpinachGreen
                         )
                     )
-
-                    Spacer(modifier = Modifier.padding(dynamicWidthPadding))
 
                     when (selectedFood) {
                         "Papa" -> {
@@ -208,7 +223,7 @@ fun Page2(page: PagerState,
                                 ),
                                 border = BorderStroke(3.dp, SpinachGreen),
                                 onClick = {},
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier.weight(0.5f),
                                 shape = RoundedCornerShape(8.dp)
                             ) {
                                 Text(text = "Unidades")
@@ -226,7 +241,7 @@ fun Page2(page: PagerState,
                                 ),
                                 border = BorderStroke(3.dp, SpinachGreen),
                                 onClick = {},
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier.weight(0.5f),
                                 shape = RoundedCornerShape(8.dp)
                             ) {
                                 Text(text = "Vasos")
@@ -244,7 +259,7 @@ fun Page2(page: PagerState,
                                 ),
                                 border = BorderStroke(3.dp, SpinachGreen),
                                 onClick = {},
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier.weight(0.5f),
                                 shape = RoundedCornerShape(8.dp)
                             ) {
                                 Text(text = "Gramos")
@@ -262,7 +277,7 @@ fun Page2(page: PagerState,
                                 ),
                                 border = BorderStroke(3.dp, SpinachGreen),
                                 onClick = {},
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier.weight(0.5f),
                                 shape = RoundedCornerShape(8.dp)
                             ) {
                                 Text(text = "Tipo de medición")
@@ -282,9 +297,18 @@ fun Page2(page: PagerState,
                             sizesPotato = sizesPotato,
                             viewModel = viewModel
                         )
-                        Spacer(modifier = Modifier.padding(bottom = dynamicHeightPadding))
+                    }
+                    item {
+                        MyRow(
+                            "Tipo de papa:",
+                            expandedTypePotato,
+                            selectedTypePotato,
+                            optionsTypePotato,
+                            viewModel = viewModel
+                        )
                     }
                 }
+
                 "Arroz blanco" -> {
                     item {
                         MyRow(
@@ -295,9 +319,9 @@ fun Page2(page: PagerState,
                             inputNumber.value,
                             viewModel = viewModel
                         )
-                        Spacer(modifier = Modifier.padding(bottom = dynamicHeightPadding))
                     }
                 }
+
                 "Espaguetis" -> {
                     item {
                         MyRow(
@@ -307,7 +331,6 @@ fun Page2(page: PagerState,
                             optionsSpaghetti,
                             viewModel = viewModel
                         )
-                        Spacer(modifier = Modifier.padding(bottom = dynamicHeightPadding))
                     }
                 }
             }
@@ -322,22 +345,22 @@ fun Page2(page: PagerState,
                             sizesPotato = sizesPotato,
                             viewModel = viewModel
                         )
-                        Spacer(modifier = Modifier.padding(bottom = dynamicHeightPadding))
                     }
                 }
+
                 "Espaguetis" -> {
                     item {
                         MyRow(
-                            text = "Cocción:",
-                            expanded = expandedCook,
-                            selected = selectedCook,
-                            options = optionsCook,
-                            input = "Espaguetis",
+                            "Cocción:",
+                            expandedCook,
+                            selectedCook,
+                            optionsCook,
+                            "Espaguetis",
                             viewModel = viewModel
                         )
-                        Spacer(modifier = Modifier.padding(bottom = dynamicHeightPadding))
                     }
                 }
+
                 "Arroz blanco" -> {
                     item {
                         MyRow(
@@ -348,7 +371,6 @@ fun Page2(page: PagerState,
                             sizesPotato = sizesPotato,
                             viewModel = viewModel
                         )
-                        Spacer(modifier = Modifier.padding(bottom = dynamicHeightPadding))
                     }
                 }
             }
@@ -380,26 +402,6 @@ fun Page2(page: PagerState,
                     Text(
                         text = "Calcular",
                         color = DarkGray
-                    )
-                }
-            }
-            if (showError) {
-                item {
-                    AlertDialog(
-                        onDismissRequest = { showError = false },
-                        title = { Text("Error") },
-                        text = { Text(errorMessage) },
-                        confirmButton = {
-                            Button(
-                                onClick = { showError = false },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = DarkSpinachGreen
-                                )
-                            ) {
-                                Text("Ok")
-                            }
-                        },
-                        containerColor = LightSpinachGreen
                     )
                 }
             }
@@ -444,7 +446,10 @@ fun Page2(page: PagerState,
                         ) {
                             Checkbox(
                                 checked = checked,
-                                onCheckedChange = { checked = it }
+                                onCheckedChange = { checked = it },
+                                colors = CheckboxDefaults.colors(
+                                    checkedColor = DarkSpinachGreen
+                                )
                             )
                             Text(text = "Recordar alimento")
                         }
@@ -466,7 +471,7 @@ fun Page2(page: PagerState,
                                     val foodMeasurementToSave = selectedMeasurement
                                     val foodCookToSave = selectedCook
                                     val foodExtraToSave = foodExtra
-                                    scope.launch {
+                                    coroutineScope.launch {
                                         val savedConfig = SavedConfig(
                                             foodName = foodNameToSave,
                                             foodQuantity = foodQuantityToSave,
@@ -478,7 +483,7 @@ fun Page2(page: PagerState,
                                         MyApplication.database.savedConfigDao().insert(savedConfig)
                                     }
                                 }
-                                scope.launch {
+                                coroutineScope.launch {
                                     page.animateScrollToPage(0)
                                 }
                                 viewModel.updateSelectedFood("Seleccione alimento")
@@ -491,7 +496,12 @@ fun Page2(page: PagerState,
                                 calculateState = false
                                 checked = false
                             },
-                            colors = ButtonColors(SpinachGreen, Color.White, Color.White, SpinachGreen),
+                            colors = ButtonColors(
+                                SpinachGreen,
+                                Color.White,
+                                Color.White,
+                                SpinachGreen
+                            ),
                             modifier = Modifier.width(screenWidth / 2)
                         ) {
                             Text(
@@ -503,6 +513,7 @@ fun Page2(page: PagerState,
                 }
             }
             item {
+                Spacer(modifier = Modifier.padding(bottom = dynamicHeightPadding))
                 Button(
                     onClick = {
                         viewModel.updateSelectedFood("Seleccione alimento")
@@ -522,6 +533,26 @@ fun Page2(page: PagerState,
                         .width(screenWidth / 2)
                 ) {
                     Text(text = "Restablecer valores")
+                }
+            }
+            if (showError) {
+                item {
+                    AlertDialog(
+                        onDismissRequest = { showError = false },
+                        title = { Text("Error") },
+                        text = { Text(errorMessage) },
+                        confirmButton = {
+                            Button(
+                                onClick = { showError = false },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = DarkSpinachGreen
+                                )
+                            ) {
+                                Text("Ok")
+                            }
+                        },
+                        containerColor = LightSpinachGreen
+                    )
                 }
             }
         }
