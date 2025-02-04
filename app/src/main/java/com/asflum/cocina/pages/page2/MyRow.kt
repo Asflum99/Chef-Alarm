@@ -40,7 +40,6 @@ fun MyRow(
     selected: String,
     options: List<String>,
     input: String? = null,
-    sizesPotato: Map<String, Int> = emptyMap(),
     viewModel: Page2ViewModel
 ) {
     // variables de Error
@@ -54,7 +53,9 @@ fun MyRow(
 
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
+    val screenHeight = configuration.screenHeightDp.dp
     val dynamicPadding = screenWidth / 30
+    val dynamicHeightPadding = screenHeight / 120
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -117,45 +118,70 @@ fun MyRow(
                                 "Alimento:" -> {
                                     viewModel.updateSelectedFood(option)
                                 }
+
                                 "Tamaño de papa:" -> {
                                     viewModel.updateSelectedPotato(option)
                                 }
+
                                 "Tazas de agua:" -> {
                                     viewModel.updateSelectedRice(option)
                                 }
+
                                 "Textura:" -> {
                                     viewModel.updateSelectedSpaghetti(option)
                                 }
+
                                 "Cocción:" -> {
                                     viewModel.updateSelectedCook(option)
                                 }
+
+                                "Tipo de papa:" -> {
+                                    viewModel.updateSelectedTypePotato(option)
+                                }
+
+                                "Tipo de corte:" -> {
+                                    viewModel.updateSelectedCutType(option)
+                                }
+                            }
+
+                            when (viewModel.selectedFood.value) {
+                                "Papa" -> {
+                                    when (option) {
+                                        "Grande" -> {
+                                            viewModel.setTimeCalculated(option)
+                                        }
+
+                                        "Mediana" -> {
+                                            viewModel.setTimeCalculated(option)
+                                        }
+
+                                        "Pequeña" -> {
+                                            viewModel.setTimeCalculated(option)
+                                        }
+
+                                        "Vapor" -> {
+                                            viewModel.vaporTimeCalculated()
+                                        }
+                                    }
+                                    if (text == "Tipo de corte:") {
+                                        viewModel.potatoCutTypeTimeCalculated(option)
+                                    }
+                                }
+                                "Arroz blanco" -> {
+                                    viewModel.riceTimeCalculated(option, options)
+                                }
+                                "Espaguetis" -> {
+                                    viewModel.spaghettiTimeCalculated(option)
+                                }
                             }
                             expanded.value = false
-                            if (text == "Tamaño de papa:") {
-                                when (viewModel.selectedPotato.value) {
-                                    "Grande" -> {
-                                        viewModel.setTimeCalculated(sizesPotato["Grande"] ?: 0)
-                                    }
-                                    "Mediana" -> {
-                                        viewModel.setTimeCalculated(sizesPotato["Mediana"] ?: 0)
-                                    }
-                                    else -> {
-                                        viewModel.setTimeCalculated(sizesPotato["Pequeña"] ?: 0)
-                                    }
-                                }
-                            } else if (text == "Cocción:") {
-                                if (option == "Vapor") {
-                                    viewModel.changeTimeCalculated()
-                                }
-                            } else if (text == "Tazas de agua:") {
-                                viewModel.riceTimeCalculated(option, options)
-                            } else if (text == "Textura:") {
-                                viewModel.spaghettiTimeCalculated(option)
-                            }
                         }
                     )
                 }
             }
         }
+    }
+    if (text != "Alimento:") {
+        Spacer(modifier = Modifier.padding(bottom = dynamicHeightPadding))
     }
 }
