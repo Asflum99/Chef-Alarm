@@ -65,10 +65,12 @@ fun Page2(
     val expandedPotato = remember { mutableStateOf(false) }
     val selectedPotato by viewModel.selectedPotato.collectAsState()
     val optionsPotato = listOf("Grande", "Mediana", "Pequeña")
-    val sizesPotato = mapOf("Grande" to 30, "Mediana" to 20, "Pequeña" to 10)
     val expandedTypePotato = remember { mutableStateOf(false) }
     val selectedTypePotato by viewModel.selectedTypePotato.collectAsState()
     val optionsTypePotato = listOf("Blanca", "Amarilla")
+    val expandedCutTypePotato = remember { mutableStateOf(false) }
+    val selectedCutTypePotato by viewModel.selectedCutTypePotato.collectAsState()
+    val optionsCutTypePotato = listOf("Papa entera", "Papa en mitades", "Papa en cuartos")
 
     // variables de Arroz blanco
     val expandedRice = remember { mutableStateOf(false) }
@@ -290,20 +292,28 @@ fun Page2(
                 "Papa" -> {
                     item {
                         MyRow(
-                            "Tamaño de papa:",
-                            expandedPotato,
-                            selectedPotato,
-                            optionsPotato,
-                            sizesPotato = sizesPotato,
+                            "Tipo de papa:",
+                            expandedTypePotato,
+                            selectedTypePotato,
+                            optionsTypePotato,
                             viewModel = viewModel
                         )
                     }
                     item {
                         MyRow(
-                            "Tipo de papa:",
-                            expandedTypePotato,
-                            selectedTypePotato,
-                            optionsTypePotato,
+                            "Tamaño de papa:",
+                            expandedPotato,
+                            selectedPotato,
+                            optionsPotato,
+                            viewModel = viewModel
+                        )
+                    }
+                    item {
+                        MyRow(
+                            "Tipo de corte:",
+                            expandedCutTypePotato,
+                            selectedCutTypePotato,
+                            optionsCutTypePotato,
                             viewModel = viewModel
                         )
                     }
@@ -342,7 +352,6 @@ fun Page2(
                             expandedCook,
                             selectedCook,
                             optionsCook,
-                            sizesPotato = sizesPotato,
                             viewModel = viewModel
                         )
                     }
@@ -368,7 +377,7 @@ fun Page2(
                             expandedCook,
                             selectedCook,
                             optionsCook,
-                            sizesPotato = sizesPotato,
+                            "Arroz blanco",
                             viewModel = viewModel
                         )
                     }
@@ -520,6 +529,8 @@ fun Page2(
                         viewModel.updateSelectedMeasurement("Tipo de medición")
                         viewModel.updateSelectedCook("Tipo de cocción")
                         viewModel.updateSelectedPotato("Tamaño de papa")
+                        viewModel.updateSelectedTypePotato("Tipo de papa")
+                        viewModel.updateSelectedCutType("Tipo de corte")
                         viewModel.updateSelectedRice("Cantidad")
                         viewModel.updateSelectedSpaghetti("Textura")
                         inputNumber.value = ""
