@@ -59,8 +59,6 @@ fun Page2(
     page: PagerState,
     viewModel: Page2ViewModel = viewModel()
 ) {
-    var foodExtra by remember { mutableStateOf("") }
-
     // variables de Papa
     val expandedPotato = remember { mutableStateOf(false) }
     val selectedPotato by viewModel.selectedPotato.collectAsState()
@@ -102,19 +100,16 @@ fun Page2(
         when (selectedFood) {
             "Papa" -> {
                 viewModel.updateSelectedMeasurement("Unidad")
-                foodExtra = selectedPotato
             }
 
             "Arroz blanco" -> {
                 viewModel.updateSelectedMeasurement("Vasos")
                 viewModel.updateSelectedCook("Hervido")
-                foodExtra = selectedRice
             }
 
             "Espaguetis" -> {
                 viewModel.updateSelectedMeasurement("Gramos")
                 viewModel.updateSelectedCook("Hervido")
-                foodExtra = selectedSpaghetti
             }
         }
     }
@@ -209,7 +204,8 @@ fun Page2(
                             .weight(0.5f),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = SpinachGreen,
-                            focusedLabelColor = DarkSpinachGreen
+                            focusedLabelColor = DarkSpinachGreen,
+                            cursorColor = SpinachGreen
                         )
                     )
 
@@ -479,7 +475,19 @@ fun Page2(
                                     val foodQuantityToSave = inputNumber.value
                                     val foodMeasurementToSave = selectedMeasurement
                                     val foodCookToSave = selectedCook
-                                    val foodExtraToSave = foodExtra
+                                    val foodExtraToSave: String = when (selectedFood) {
+                                        "Papa" -> {
+                                            viewModel.selectedPotato.value
+                                        }
+                                        "Arroz blanco" -> {
+                                            viewModel.selectedRice.value
+                                        }
+                                        else -> {
+                                            viewModel.selectedSpaghetti.value
+                                        }
+                                    }
+                                    val potatoTypeToSave = selectedTypePotato
+                                    val potatoCutTypeToSave = selectedCutTypePotato
                                     coroutineScope.launch {
                                         val savedConfig = SavedConfig(
                                             foodName = foodNameToSave,
@@ -487,7 +495,9 @@ fun Page2(
                                             foodMeasurement = foodMeasurementToSave,
                                             foodCook = foodCookToSave,
                                             foodExtra = foodExtraToSave,
-                                            estimatedTime = timeCalculated
+                                            estimatedTime = timeCalculated,
+                                            potatoType = potatoTypeToSave,
+                                            potatoCut = potatoCutTypeToSave
                                         )
                                         MyApplication.database.savedConfigDao().insert(savedConfig)
                                     }
@@ -499,6 +509,8 @@ fun Page2(
                                 viewModel.updateSelectedMeasurement("Tipo de medición")
                                 viewModel.updateSelectedCook("Tipo de cocción")
                                 viewModel.updateSelectedPotato("Tamaño de papa")
+                                viewModel.updateSelectedTypePotato("Tipo de papa")
+                                viewModel.updateSelectedCutType("Tipo de corte")
                                 viewModel.updateSelectedRice("Cantidad")
                                 viewModel.updateSelectedSpaghetti("Textura")
                                 inputNumber.value = ""
