@@ -11,5 +11,7 @@ data class SavedConfig(
     val foodMeasurement: String,
     val foodCook: String,
     val foodExtra: String? = null,
-    val estimatedTime: Int
+    val estimatedTime: Int,
+    val potatoType: String? = null,
+    val potatoCut: String? = null
 )
