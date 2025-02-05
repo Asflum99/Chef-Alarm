@@ -42,6 +42,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -52,6 +53,7 @@ import com.asflum.cocina.ui.theme.DarkGray
 import com.asflum.cocina.ui.theme.DarkSpinachGreen
 import com.asflum.cocina.ui.theme.LightSpinachGreen
 import com.asflum.cocina.ui.theme.SpinachGreen
+import com.asflum.cocina.ui.theme.quicksandFamily
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 
@@ -189,17 +191,12 @@ fun Page2(
                         },
                         textStyle = TextStyle(color = Color.Black),
                         label = {
-                            Box(
-                                modifier = Modifier.padding(
-                                    start = 0.dp,
-                                    top = 0.dp
-                                )
-                            ) {
-                                Text(
-                                    "Ingrese cantidad",
-                                    color = DarkGray
-                                )
-                            }
+                            Text(
+                                "Ingrese cantidad",
+                                color = DarkGray,
+                                fontWeight = FontWeight.Medium,
+                                fontFamily = quicksandFamily
+                            )
                         },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
@@ -229,7 +226,11 @@ fun Page2(
                                 modifier = Modifier.weight(0.5f),
                                 shape = RoundedCornerShape(8.dp)
                             ) {
-                                Text(text = "Unidades")
+                                Text(
+                                    "Unidades",
+                                    fontWeight = FontWeight.Medium,
+                                    fontFamily = quicksandFamily
+                                )
                             }
                         }
 
@@ -247,7 +248,11 @@ fun Page2(
                                 modifier = Modifier.weight(0.5f),
                                 shape = RoundedCornerShape(8.dp)
                             ) {
-                                Text(text = "Vasos")
+                                Text(
+                                    "Vasos",
+                                    fontWeight = FontWeight.Medium,
+                                    fontFamily = quicksandFamily
+                                )
                             }
                         }
 
@@ -265,7 +270,11 @@ fun Page2(
                                 modifier = Modifier.weight(0.5f),
                                 shape = RoundedCornerShape(8.dp)
                             ) {
-                                Text(text = "Gramos")
+                                Text(
+                                    "Gramos",
+                                    fontWeight = FontWeight.Medium,
+                                    fontFamily = quicksandFamily
+                                )
                             }
                         }
 
@@ -283,7 +292,11 @@ fun Page2(
                                 modifier = Modifier.weight(0.5f),
                                 shape = RoundedCornerShape(8.dp)
                             ) {
-                                Text(text = "Tipo de medición")
+                                Text(
+                                    "Tipo de medición",
+                                    fontWeight = FontWeight.Medium,
+                                    fontFamily = quicksandFamily
+                                )
                             }
                         }
                     }
@@ -399,6 +412,12 @@ fun Page2(
                         } else if (selectedFood == "Papa" && selectedPotato == "Tamaño de papa") {
                             showError = true
                             errorMessage = "Por favor, seleccione un tamaño de papa"
+                        } else if (selectedFood == "Papa" && selectedTypePotato == "Tipo de papa") {
+                            showError = true
+                            errorMessage = "Por favor, seleccione un tipo de papa"
+                        } else if (selectedFood == "Papa" && selectedCutTypePotato == "Tipo de corte") {
+                            showError = true
+                            errorMessage = "Por favor, seleccione un tipo de corte para la papa"
                         } else {
                             calculateState = true
                         }
@@ -407,8 +426,10 @@ fun Page2(
                     colors = ButtonColors(SpinachGreen, Color.White, Color.White, SpinachGreen)
                 ) {
                     Text(
-                        text = "Calcular",
-                        color = DarkGray
+                        "Calcular",
+                        color = DarkGray,
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = quicksandFamily
                     )
                 }
             }
@@ -424,12 +445,12 @@ fun Page2(
                             border = BorderStroke(3.dp, SpinachGreen)
                         ) {
                             Text(
-                                text = "-1",
+                                "-1",
                                 color = DarkGray
                             )
                         }
 
-                        Text(text = "$timeCalculated min")
+                        Text("$timeCalculated min")
 
                         Button(
                             onClick = { viewModel.plusTimeCalculated() },
@@ -437,7 +458,7 @@ fun Page2(
                             border = BorderStroke(3.dp, SpinachGreen)
                         ) {
                             Text(
-                                text = "+1",
+                                "+1",
                                 color = DarkGray
                             )
                         }
@@ -458,7 +479,7 @@ fun Page2(
                                     checkedColor = SpinachGreen
                                 )
                             )
-                            Text(text = "Recordar alimento")
+                            Text("Recordar alimento")
                         }
                         Button(
                             onClick = {
@@ -466,10 +487,10 @@ fun Page2(
                                 val alarmTime =
                                     currentTime.plusMinutes(timeCalculated.toLong())
                                 createAlarm(
-                                    context = context,
-                                    hour = alarmTime.hour,
-                                    minutes = alarmTime.minute,
-                                    message = selectedFood
+                                    context,
+                                    alarmTime.hour,
+                                    alarmTime.minute,
+                                    selectedFood
                                 )
 
                                 if (checked) {
@@ -559,7 +580,11 @@ fun Page2(
                     modifier = Modifier
                         .width(screenWidth / 2)
                 ) {
-                    Text(text = "Restablecer valores")
+                    Text(
+                        "Restablecer valores",
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = quicksandFamily
+                    )
                 }
             }
             if (showError) {
