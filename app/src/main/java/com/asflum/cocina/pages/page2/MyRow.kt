@@ -4,11 +4,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,6 +37,7 @@ import com.asflum.cocina.ui.theme.DarkGray
 import com.asflum.cocina.ui.theme.DarkSpinachGreen
 import com.asflum.cocina.ui.theme.LightSpinachGreen
 import com.asflum.cocina.ui.theme.SpinachGreen
+import com.asflum.cocina.ui.theme.quicksandFamily
 
 @Composable
 fun MyRow(
@@ -70,16 +72,18 @@ fun MyRow(
             .fillMaxWidth()
     ) {
         Text(
-            text = text,
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-            fontSize = 19.sp
+            text,
+            Modifier.weight(1f),
+            fontSize = 19.sp,
+            fontWeight = FontWeight.Medium,
+            fontFamily = quicksandFamily,
+            textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.padding(dynamicPadding))
 
         Box(
-            modifier = Modifier
+            Modifier
                 .weight(1f)
                 .wrapContentSize(Alignment.Center)
         ) {
@@ -92,12 +96,17 @@ fun MyRow(
                     }
                     expanded.value = true
                 },
-                modifier = Modifier.width(screenWidth / 2),
+                modifier = Modifier.fillMaxWidth(),
                 colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
                 border = BorderStroke(3.dp, SpinachGreen),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
             ) {
-                Text(text = selected)
+                Text(
+                    selected,
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = quicksandFamily
+                )
             }
             if (showError) {
                 AlertDialog(
@@ -127,7 +136,9 @@ fun MyRow(
                         text = {
                             Text(
                                 option,
-                                color = DarkGray
+                                color = DarkGray,
+                                fontWeight = FontWeight.Medium,
+                                fontFamily = quicksandFamily
                             )
                         },
                         onClick = {
