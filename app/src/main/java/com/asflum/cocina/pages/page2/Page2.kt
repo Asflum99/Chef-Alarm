@@ -41,6 +41,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -121,7 +122,7 @@ fun Page2(
 
     val timeCalculated by viewModel.timeCalculated.collectAsState()
 
-    val inputNumber = remember { mutableStateOf("") }
+    val inputNumber by viewModel.inputNumber.collectAsState()
 
     var calculateState by remember { mutableStateOf(false) }
 
@@ -156,7 +157,7 @@ fun Page2(
                     expandedFood,
                     selectedFood,
                     optionsFood,
-                    viewModel = viewModel
+                    viewModel
                 )
             }
             item {
@@ -167,25 +168,26 @@ fun Page2(
                         .fillMaxWidth()
                 ) {
                     OutlinedTextField(
-                        value = inputNumber.value,
+                        value = inputNumber,
                         onValueChange = { newValue ->
                             // Filtrar solo los caracteres numéricos
                             if (newValue.isEmpty()) {
-                                inputNumber.value = newValue
+                                viewModel.updateInputNumber(newValue)
                             } else if (newValue.matches(Regex("^\\d*\\.?\\d*$")) && newValue.count { it == '.' } <= 1) {
                                 // Verifica que el punto no sea el primer carácter
                                 if (newValue.first() != '.') {
-                                    inputNumber.value = newValue
+                                    viewModel.updateInputNumber(newValue)
                                 }
                             }
                             optionsRice.clear()
                             viewModel.updateSelectedRice("Cantidad")
-                            if (inputNumber.value != "") {
+                            if (newValue != "" && newValue != ".") {
                                 for (multiplier in multipliers) {
-                                    optionsRice.add((inputNumber.value.toDouble() * multiplier.toDouble()).toString())
+                                    optionsRice.add((newValue.toDouble() * multiplier.toDouble()).toString())
                                 }
                             }
                         },
+                        textStyle = TextStyle(color = Color.Black),
                         label = {
                             Box(
                                 modifier = Modifier.padding(
@@ -193,7 +195,10 @@ fun Page2(
                                     top = 0.dp
                                 )
                             ) {
-                                Text("Ingrese cantidad")
+                                Text(
+                                    "Ingrese cantidad",
+                                    color = DarkGray
+                                )
                             }
                         },
                         keyboardOptions = KeyboardOptions(
@@ -205,7 +210,7 @@ fun Page2(
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = SpinachGreen,
                             focusedLabelColor = DarkSpinachGreen,
-                            cursorColor = SpinachGreen
+                            cursorColor = Color.Black,
                         )
                     )
 
@@ -292,7 +297,7 @@ fun Page2(
                             expandedTypePotato,
                             selectedTypePotato,
                             optionsTypePotato,
-                            viewModel = viewModel
+                            viewModel
                         )
                     }
                     item {
@@ -301,7 +306,7 @@ fun Page2(
                             expandedPotato,
                             selectedPotato,
                             optionsPotato,
-                            viewModel = viewModel
+                            viewModel
                         )
                     }
                     item {
@@ -310,7 +315,7 @@ fun Page2(
                             expandedCutTypePotato,
                             selectedCutTypePotato,
                             optionsCutTypePotato,
-                            viewModel = viewModel
+                            viewModel
                         )
                     }
                 }
@@ -322,8 +327,7 @@ fun Page2(
                             expandedRice,
                             selectedRice,
                             optionsRice,
-                            inputNumber.value,
-                            viewModel = viewModel
+                            viewModel
                         )
                     }
                 }
@@ -335,7 +339,7 @@ fun Page2(
                             expandedSpaghetti,
                             selectedSpaghetti,
                             optionsSpaghetti,
-                            viewModel = viewModel
+                            viewModel
                         )
                     }
                 }
@@ -348,7 +352,7 @@ fun Page2(
                             expandedCook,
                             selectedCook,
                             optionsCook,
-                            viewModel = viewModel
+                            viewModel
                         )
                     }
                 }
@@ -360,8 +364,7 @@ fun Page2(
                             expandedCook,
                             selectedCook,
                             optionsCook,
-                            "Espaguetis",
-                            viewModel = viewModel
+                            viewModel
                         )
                     }
                 }
@@ -373,8 +376,7 @@ fun Page2(
                             expandedCook,
                             selectedCook,
                             optionsCook,
-                            "Arroz blanco",
-                            viewModel = viewModel
+                            viewModel
                         )
                     }
                 }
@@ -385,7 +387,7 @@ fun Page2(
                         if (selectedFood == "Seleccione alimento") {
                             showError = true
                             errorMessage = "Por favor, seleccione un alimento"
-                        } else if (inputNumber.value.isEmpty()) {
+                        } else if (inputNumber.isEmpty()) {
                             showError = true
                             errorMessage = "Por favor, ingrese una cantidad"
                         } else if (selectedMeasurement == "Tipo de medición") {
@@ -453,7 +455,7 @@ fun Page2(
                                 checked = checked,
                                 onCheckedChange = { checked = it },
                                 colors = CheckboxDefaults.colors(
-                                    checkedColor = DarkSpinachGreen
+                                    checkedColor = SpinachGreen
                                 )
                             )
                             Text(text = "Recordar alimento")
@@ -472,16 +474,18 @@ fun Page2(
 
                                 if (checked) {
                                     val foodNameToSave = selectedFood
-                                    val foodQuantityToSave = inputNumber.value
+                                    val foodQuantityToSave = inputNumber
                                     val foodMeasurementToSave = selectedMeasurement
                                     val foodCookToSave = selectedCook
                                     val foodExtraToSave: String = when (selectedFood) {
                                         "Papa" -> {
                                             viewModel.selectedPotato.value
                                         }
+
                                         "Arroz blanco" -> {
                                             viewModel.selectedRice.value
                                         }
+
                                         else -> {
                                             viewModel.selectedSpaghetti.value
                                         }
@@ -513,7 +517,7 @@ fun Page2(
                                 viewModel.updateSelectedCutType("Tipo de corte")
                                 viewModel.updateSelectedRice("Cantidad")
                                 viewModel.updateSelectedSpaghetti("Textura")
-                                inputNumber.value = ""
+                                viewModel.updateInputNumber("")
                                 calculateState = false
                                 checked = false
                             },
@@ -545,7 +549,7 @@ fun Page2(
                         viewModel.updateSelectedCutType("Tipo de corte")
                         viewModel.updateSelectedRice("Cantidad")
                         viewModel.updateSelectedSpaghetti("Textura")
-                        inputNumber.value = ""
+                        viewModel.updateInputNumber("")
                         calculateState = false
                         checked = false
                         viewModel.timeCalculatedToZero()
