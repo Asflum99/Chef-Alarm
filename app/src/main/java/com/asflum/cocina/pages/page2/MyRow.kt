@@ -14,11 +14,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +32,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.asflum.cocina.ui.theme.DarkGray
+import com.asflum.cocina.ui.theme.DarkSpinachGreen
 import com.asflum.cocina.ui.theme.LightSpinachGreen
 import com.asflum.cocina.ui.theme.SpinachGreen
 
@@ -39,7 +43,6 @@ fun MyRow(
     expanded: MutableState<Boolean>,
     selected: String,
     options: List<String>,
-    input: String? = null,
     viewModel: Page2ViewModel
 ) {
     // variables de Error
@@ -47,7 +50,10 @@ fun MyRow(
     var errorMessage by remember { mutableStateOf("") }
     var isButtonEnabled by remember { mutableStateOf(true) }
 
-    if (input == "Espaguetis" || input == "Arroz blanco") {
+    val input by viewModel.inputNumber.collectAsState()
+
+    val selectedFood by viewModel.selectedFood.collectAsState()
+    if ((text == "Cocción:" && selectedFood == "Espaguetis") || (text == "Cocción:" && selectedFood == "Arroz blanco")) {
         isButtonEnabled = false
     }
 
@@ -80,7 +86,7 @@ fun MyRow(
             Button(
                 enabled = isButtonEnabled,
                 onClick = {
-                    if (text == "Tazas de agua" && (input == "" || input == ".")) {
+                    if (text == "Tazas de agua:" && (input == "" || input == ".")) {
                         showError = true
                         errorMessage = "Por favor, ingrese una cantidad"
                     }
@@ -99,10 +105,16 @@ fun MyRow(
                     title = { Text("Error") },
                     text = { Text(errorMessage) },
                     confirmButton = {
-                        Button(onClick = { showError = false }) {
+                        Button(
+                            onClick = { showError = false },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = DarkSpinachGreen
+                            )
+                        ) {
                             Text("Ok")
                         }
-                    }
+                    },
+                    containerColor = LightSpinachGreen
                 )
             }
             DropdownMenu(
@@ -112,7 +124,12 @@ fun MyRow(
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(
-                        text = { Text(text = option) },
+                        text = {
+                            Text(
+                                option,
+                                color = DarkGray
+                            )
+                        },
                         onClick = {
                             when (text) {
                                 "Alimento:" -> {
@@ -167,9 +184,11 @@ fun MyRow(
                                         viewModel.potatoCutTypeTimeCalculated(option)
                                     }
                                 }
+
                                 "Arroz blanco" -> {
                                     viewModel.riceTimeCalculated(option, options)
                                 }
+
                                 "Espaguetis" -> {
                                     viewModel.spaghettiTimeCalculated(option)
                                 }
