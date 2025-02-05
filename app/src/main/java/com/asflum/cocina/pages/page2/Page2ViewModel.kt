@@ -35,9 +35,16 @@ class Page2ViewModel: ViewModel() {
     private val _selectedSpaghetti = MutableStateFlow("Textura")
     val selectedSpaghetti: StateFlow<String> get() = _selectedSpaghetti
 
+    private val _inputNumber = MutableStateFlow("")
+    val inputNumber: StateFlow<String> get() = _inputNumber
+
     // Tiempo calculado
     private val _timeCalculated = MutableStateFlow(0)
     val timeCalculated: StateFlow<Int> get() = _timeCalculated
+
+    fun updateInputNumber(newValue: String) {
+        _inputNumber.value = newValue
+    }
 
     fun updateSelectedFood(food: String) {
         _selectedFood.value = food
