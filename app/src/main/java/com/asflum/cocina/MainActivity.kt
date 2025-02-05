@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,6 +44,7 @@ import com.asflum.cocina.ui.theme.DarkGray
 import com.asflum.cocina.ui.theme.MustardYellow
 import com.asflum.cocina.ui.theme.TomatoRed
 import com.asflum.cocina.ui.theme.WarmWhite
+import com.asflum.cocina.ui.theme.poppinsFamily
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,29 +121,35 @@ fun NavigationComponent() {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Text(text = "Alimentos guardados",
-                    fontSize = 20.sp,
-                    color = text1Color,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
+                Text(
+                    "Alimentos guardados",
+                    Modifier
                         .width(120.dp)
                         .clickable {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(0)
-                        }
-                    }
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(0)
+                            }
+                        },
+                    text1Color,
+                    20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = poppinsFamily,
+                    textAlign = TextAlign.Center,
                 )
-                Text(text = "Añadir alimento",
-                    fontSize = 20.sp,
-                    color = text2Color,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
+                Text(
+                    "Añadir alimento",
+                    Modifier
                         .width(120.dp)
                         .clickable {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(1)
-                        }
-                    }
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(1)
+                            }
+                        },
+                    text2Color,
+                    20.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = poppinsFamily,
+                    textAlign = TextAlign.Center
                 )
             }
         }
