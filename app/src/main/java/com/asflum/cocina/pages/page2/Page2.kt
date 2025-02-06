@@ -53,10 +53,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asflum.cocina.MyApplication
 import com.asflum.cocina.SavedConfig
 import com.asflum.cocina.createAlarm
-import com.asflum.cocina.ui.theme.DarkGray
-import com.asflum.cocina.ui.theme.DarkSpinachGreen
-import com.asflum.cocina.ui.theme.LightSpinachGreen
-import com.asflum.cocina.ui.theme.SpinachGreen
+import com.asflum.cocina.ui.theme.DarkGreen
+import com.asflum.cocina.ui.theme.LightGray
+import com.asflum.cocina.ui.theme.MediumGreen
+import com.asflum.cocina.ui.theme.White
 import com.asflum.cocina.ui.theme.quicksandFamily
 import kotlinx.coroutines.launch
 import java.time.LocalTime
@@ -145,13 +145,14 @@ fun Page2(
     val coroutineScope = rememberCoroutineScope()
 
     val customSelectionColors = TextSelectionColors(
-        handleColor = SpinachGreen, // Color del "handle"
+        handleColor = MediumGreen, // Color del "handle"
         backgroundColor = LocalTextSelectionColors.current.backgroundColor // Mantiene el color por defecto
     )
 
-    val buttonCalculateColor by remember { derivedStateOf { if (calculateState) Color.White else SpinachGreen } }
+    val buttonCalculateColor by remember { derivedStateOf { if (calculateState) Color.White else DarkGreen } }
     val buttonCalculateBorderWidth by remember { derivedStateOf { if (calculateState) 3.dp else 0.dp } }
-    val buttonCalculateBorderColor by remember { derivedStateOf { if (calculateState) SpinachGreen else Color.Transparent } }
+    val buttonCalculateBorderColor by remember { derivedStateOf { if (calculateState) MediumGreen else Color.Transparent } }
+    val buttonCalculateTextColor by remember { derivedStateOf { if (calculateState) Color.Black else White } }
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -207,7 +208,7 @@ fun Page2(
                             label = {
                                 Text(
                                     "Ingrese cantidad",
-                                    color = DarkGray,
+                                    color = Color.Black,
                                     fontWeight = FontWeight.Medium,
                                     fontFamily = quicksandFamily
                                 )
@@ -219,8 +220,7 @@ fun Page2(
                             modifier = Modifier
                                 .weight(0.5f),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = SpinachGreen,
-                                focusedLabelColor = DarkSpinachGreen,
+                                focusedBorderColor = MediumGreen,
                                 cursorColor = Color.Black,
                             )
                         )
@@ -236,7 +236,7 @@ fun Page2(
                                     Color.White,
                                     Color.DarkGray
                                 ),
-                                border = BorderStroke(3.dp, SpinachGreen),
+                                border = BorderStroke(3.dp, LightGray),
                                 onClick = {},
                                 modifier = Modifier.weight(0.5f),
                                 shape = RoundedCornerShape(8.dp)
@@ -258,7 +258,7 @@ fun Page2(
                                     Color.White,
                                     Color.DarkGray
                                 ),
-                                border = BorderStroke(3.dp, SpinachGreen),
+                                border = BorderStroke(3.dp, LightGray),
                                 onClick = {},
                                 modifier = Modifier.weight(0.5f),
                                 shape = RoundedCornerShape(8.dp)
@@ -280,7 +280,7 @@ fun Page2(
                                     Color.White,
                                     Color.DarkGray
                                 ),
-                                border = BorderStroke(3.dp, SpinachGreen),
+                                border = BorderStroke(3.dp, LightGray),
                                 onClick = {},
                                 modifier = Modifier.weight(0.5f),
                                 shape = RoundedCornerShape(8.dp)
@@ -302,7 +302,7 @@ fun Page2(
                                     Color.White,
                                     Color.DarkGray
                                 ),
-                                border = BorderStroke(3.dp, SpinachGreen),
+                                border = BorderStroke(3.dp, LightGray),
                                 onClick = {},
                                 modifier = Modifier.weight(0.5f),
                                 shape = RoundedCornerShape(8.dp)
@@ -382,6 +382,7 @@ fun Page2(
                             optionsCook,
                             viewModel
                         )
+                        viewModel.updateSelectedCook("Tipo de cocción")
                     }
                 }
 
@@ -394,6 +395,7 @@ fun Page2(
                             optionsCook,
                             viewModel
                         )
+                        // ACÁ DEBO DECIRLE QUE EL BOTÓN ESTÉ DESHABILITADO
                     }
                 }
 
@@ -406,6 +408,7 @@ fun Page2(
                             optionsCook,
                             viewModel
                         )
+                        // ACÁ DEBO DECIRLE QUE EL BOTÓN ESTÉ DESHABILITADO
                     }
                 }
             }
@@ -433,6 +436,12 @@ fun Page2(
                         } else if (selectedFood == "Papa" && selectedCutTypePotato == "Tipo de corte") {
                             showError = true
                             errorMessage = "Por favor, seleccione un tipo de corte para la papa"
+                        } else if (selectedFood == "Espaguetis" && selectedSpaghetti == "Textura") {
+                            showError = true
+                            errorMessage = "Por favor, seleccione una textura"
+                        } else if (selectedFood == "Arroz blanco" && selectedRice == "Cantidad") {
+                            showError = true
+                            errorMessage = "Por favor, seleccione una cantidad de tazas de agua"
                         } else {
                             calculateState = true
                         }
@@ -442,13 +451,13 @@ fun Page2(
                         buttonCalculateColor,
                         Color.White,
                         Color.White,
-                        SpinachGreen
+                        Color.White
                     ),
                     border = BorderStroke(buttonCalculateBorderWidth, buttonCalculateBorderColor)
                 ) {
                     Text(
                         "Calcular",
-                        color = Color.Black,
+                        color = buttonCalculateTextColor,
                         fontWeight = FontWeight.Medium,
                         fontFamily = quicksandFamily
                     )
@@ -462,12 +471,17 @@ fun Page2(
                     ) {
                         Button(
                             onClick = { viewModel.minusTimeCalculated() },
-                            colors = ButtonColors(Color.White, DarkGray, Color.White, SpinachGreen),
-                            border = BorderStroke(3.dp, SpinachGreen)
+                            colors = ButtonColors(
+                                MediumGreen,
+                                Color.Black,
+                                Color.White,
+                                Color.White
+                            ),
+                            border = BorderStroke(0.dp, Color.Transparent)
                         ) {
                             Text(
                                 "-1",
-                                color = DarkGray,
+                                color = White,
                                 fontWeight = FontWeight.Medium,
                                 fontFamily = quicksandFamily
                             )
@@ -477,12 +491,17 @@ fun Page2(
 
                         Button(
                             onClick = { viewModel.plusTimeCalculated() },
-                            colors = ButtonColors(Color.White, DarkGray, Color.White, SpinachGreen),
-                            border = BorderStroke(3.dp, SpinachGreen)
+                            colors = ButtonColors(
+                                MediumGreen,
+                                Color.Black,
+                                Color.White,
+                                Color.White
+                            ),
+                            border = BorderStroke(3.dp, MediumGreen)
                         ) {
                             Text(
                                 "+1",
-                                color = DarkGray,
+                                color = White,
                                 fontWeight = FontWeight.Medium,
                                 fontFamily = quicksandFamily
                             )
@@ -501,7 +520,9 @@ fun Page2(
                                 checked = checked,
                                 onCheckedChange = { checked = it },
                                 colors = CheckboxDefaults.colors(
-                                    checkedColor = SpinachGreen
+                                    checkedColor = MediumGreen,
+                                    uncheckedColor = LightGray,
+                                    checkmarkColor = White
                                 )
                             )
                             Text(
@@ -568,20 +589,21 @@ fun Page2(
                                 viewModel.updateSelectedRice("Cantidad")
                                 viewModel.updateSelectedSpaghetti("Textura")
                                 viewModel.updateInputNumber("")
+                                optionsRice.clear()
                                 calculateState = false
                                 checked = false
                             },
                             colors = ButtonColors(
-                                SpinachGreen,
+                                DarkGreen,
                                 Color.White,
                                 Color.White,
-                                SpinachGreen
+                                Color.White
                             ),
                             modifier = Modifier.width(screenWidth / 2)
                         ) {
                             Text(
                                 text = "Programar alarma",
-                                color = DarkGray,
+                                color = White,
                                 fontWeight = FontWeight.Medium,
                                 fontFamily = quicksandFamily
                             )
@@ -602,12 +624,13 @@ fun Page2(
                         viewModel.updateSelectedRice("Cantidad")
                         viewModel.updateSelectedSpaghetti("Textura")
                         viewModel.updateInputNumber("")
+                        optionsRice.clear()
                         calculateState = false
                         checked = false
                         viewModel.timeCalculatedToZero()
                     },
                     colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
-                    border = BorderStroke(3.dp, SpinachGreen),
+                    border = BorderStroke(3.dp, MediumGreen),
                     modifier = Modifier
                         .width(screenWidth / 2)
                 ) {
@@ -625,26 +648,29 @@ fun Page2(
                         title = {
                             Text(
                                 "Error",
-                                color = DarkGray
+                                color = Color.Black
                             )
                         },
                         text = {
                             Text(
                                 errorMessage,
-                                color = DarkGray
+                                color = Color.Black
                             )
                         },
                         confirmButton = {
                             Button(
                                 onClick = { showError = false },
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = DarkSpinachGreen
+                                    containerColor = MediumGreen
                                 )
                             ) {
-                                Text("Ok")
+                                Text(
+                                    "Ok",
+                                    color = White
+                                )
                             }
                         },
-                        containerColor = LightSpinachGreen
+                        containerColor = White
                     )
                 }
             }
