@@ -17,6 +17,8 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -27,8 +29,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -140,6 +144,15 @@ fun Page2(
 
     val coroutineScope = rememberCoroutineScope()
 
+    val customSelectionColors = TextSelectionColors(
+        handleColor = SpinachGreen, // Color del "handle"
+        backgroundColor = LocalTextSelectionColors.current.backgroundColor // Mantiene el color por defecto
+    )
+
+    val buttonCalculateColor by remember { derivedStateOf { if (calculateState) Color.White else SpinachGreen } }
+    val buttonCalculateBorderWidth by remember { derivedStateOf { if (calculateState) 3.dp else 0.dp } }
+    val buttonCalculateBorderColor by remember { derivedStateOf { if (calculateState) SpinachGreen else Color.Transparent } }
+
     Box(modifier = Modifier
         .fillMaxSize()
         .pointerInput(Unit) {
@@ -169,47 +182,49 @@ fun Page2(
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-                    OutlinedTextField(
-                        value = inputNumber,
-                        onValueChange = { newValue ->
-                            // Filtrar solo los caracteres numéricos
-                            if (newValue.isEmpty()) {
-                                viewModel.updateInputNumber(newValue)
-                            } else if (newValue.matches(Regex("^\\d*\\.?\\d*$")) && newValue.count { it == '.' } <= 1) {
-                                // Verifica que el punto no sea el primer carácter
-                                if (newValue.first() != '.') {
+                    CompositionLocalProvider(LocalTextSelectionColors provides customSelectionColors) {
+                        OutlinedTextField(
+                            value = inputNumber,
+                            onValueChange = { newValue ->
+                                // Filtrar solo los caracteres numéricos
+                                if (newValue.isEmpty()) {
                                     viewModel.updateInputNumber(newValue)
+                                } else if (newValue.matches(Regex("^\\d*\\.?\\d*$")) && newValue.count { it == '.' } <= 1) {
+                                    // Verifica que el punto no sea el primer carácter
+                                    if (newValue.first() != '.') {
+                                        viewModel.updateInputNumber(newValue)
+                                    }
                                 }
-                            }
-                            optionsRice.clear()
-                            viewModel.updateSelectedRice("Cantidad")
-                            if (newValue != "" && newValue != ".") {
-                                for (multiplier in multipliers) {
-                                    optionsRice.add((newValue.toDouble() * multiplier.toDouble()).toString())
+                                optionsRice.clear()
+                                viewModel.updateSelectedRice("Cantidad")
+                                if (newValue != "" && newValue != ".") {
+                                    for (multiplier in multipliers) {
+                                        optionsRice.add((newValue.toDouble() * multiplier.toDouble()).toString())
+                                    }
                                 }
-                            }
-                        },
-                        textStyle = TextStyle(color = Color.Black),
-                        label = {
-                            Text(
-                                "Ingrese cantidad",
-                                color = DarkGray,
-                                fontWeight = FontWeight.Medium,
-                                fontFamily = quicksandFamily
+                            },
+                            textStyle = TextStyle(color = Color.Black),
+                            label = {
+                                Text(
+                                    "Ingrese cantidad",
+                                    color = DarkGray,
+                                    fontWeight = FontWeight.Medium,
+                                    fontFamily = quicksandFamily
+                                )
+                            },
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Number
+                            ),
+                            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                            modifier = Modifier
+                                .weight(0.5f),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = SpinachGreen,
+                                focusedLabelColor = DarkSpinachGreen,
+                                cursorColor = Color.Black,
                             )
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number
-                        ),
-                        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                        modifier = Modifier
-                            .weight(0.5f),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = SpinachGreen,
-                            focusedLabelColor = DarkSpinachGreen,
-                            cursorColor = Color.Black,
                         )
-                    )
+                    }
 
                     when (selectedFood) {
                         "Papa" -> {
@@ -423,11 +438,17 @@ fun Page2(
                         }
                     },
                     modifier = Modifier.width(screenWidth / 2),
-                    colors = ButtonColors(SpinachGreen, Color.White, Color.White, SpinachGreen)
+                    colors = ButtonColors(
+                        buttonCalculateColor,
+                        Color.White,
+                        Color.White,
+                        SpinachGreen
+                    ),
+                    border = BorderStroke(buttonCalculateBorderWidth, buttonCalculateBorderColor)
                 ) {
                     Text(
                         "Calcular",
-                        color = DarkGray,
+                        color = Color.Black,
                         fontWeight = FontWeight.Medium,
                         fontFamily = quicksandFamily
                     )
@@ -446,7 +467,9 @@ fun Page2(
                         ) {
                             Text(
                                 "-1",
-                                color = DarkGray
+                                color = DarkGray,
+                                fontWeight = FontWeight.Medium,
+                                fontFamily = quicksandFamily
                             )
                         }
 
@@ -459,7 +482,9 @@ fun Page2(
                         ) {
                             Text(
                                 "+1",
-                                color = DarkGray
+                                color = DarkGray,
+                                fontWeight = FontWeight.Medium,
+                                fontFamily = quicksandFamily
                             )
                         }
                     }
@@ -479,7 +504,11 @@ fun Page2(
                                     checkedColor = SpinachGreen
                                 )
                             )
-                            Text("Recordar alimento")
+                            Text(
+                                "Recordar alimento",
+                                fontWeight = FontWeight.Medium,
+                                fontFamily = quicksandFamily
+                            )
                         }
                         Button(
                             onClick = {
@@ -552,7 +581,9 @@ fun Page2(
                         ) {
                             Text(
                                 text = "Programar alarma",
-                                color = DarkGray
+                                color = DarkGray,
+                                fontWeight = FontWeight.Medium,
+                                fontFamily = quicksandFamily
                             )
                         }
                     }
@@ -591,8 +622,18 @@ fun Page2(
                 item {
                     AlertDialog(
                         onDismissRequest = { showError = false },
-                        title = { Text("Error") },
-                        text = { Text(errorMessage) },
+                        title = {
+                            Text(
+                                "Error",
+                                color = DarkGray
+                            )
+                        },
+                        text = {
+                            Text(
+                                errorMessage,
+                                color = DarkGray
+                            )
+                        },
                         confirmButton = {
                             Button(
                                 onClick = { showError = false },
