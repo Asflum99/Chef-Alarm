@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,10 +41,9 @@ import com.asflum.cocina.ui.theme.CocinaTheme
 import kotlinx.coroutines.launch
 import com.asflum.cocina.pages.page1.Page1
 import com.asflum.cocina.pages.page2.Page2
-import com.asflum.cocina.ui.theme.DarkGray
-import com.asflum.cocina.ui.theme.MustardYellow
-import com.asflum.cocina.ui.theme.TomatoRed
-import com.asflum.cocina.ui.theme.WarmWhite
+import com.asflum.cocina.ui.theme.DarkGreen
+import com.asflum.cocina.ui.theme.SoftOrange
+import com.asflum.cocina.ui.theme.White
 import com.asflum.cocina.ui.theme.poppinsFamily
 
 class MainActivity : ComponentActivity() {
@@ -88,11 +88,11 @@ fun NavigationComponent() {
 
     // Animación de transición de colores
     val text1Color by animateColorAsState(
-        targetValue = if (currentPage == 0) TomatoRed else WarmWhite,
+        targetValue = if (currentPage == 0) DarkGreen else White,
         animationSpec = tween(durationMillis = 200)
     )
     val text2Color by animateColorAsState(
-        targetValue = if (currentPage == 1) TomatoRed else WarmWhite,
+        targetValue = if (currentPage == 1) DarkGreen else White,
         animationSpec = tween(durationMillis = 200)
     )
 
@@ -105,15 +105,15 @@ fun NavigationComponent() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(statusBarHeight) // Solo cubre la barra de estado
-                .background(DarkGray)
+                .background(Color.Black) // CONSIDERAR EVALUACIÓN
         )
 
         // Parte superior fija
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.18f) // Porcentaje de espacio para la parte superior
-                .background(MustardYellow),
+                .weight(0.2f) // Porcentaje de espacio para la parte superior
+                .background(SoftOrange),
             contentAlignment = Alignment.Center // Los elementos dentro del Box (Row) estará centrado
         ) {
             Row(
@@ -158,7 +158,7 @@ fun NavigationComponent() {
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(0.8f)
-                .background(WarmWhite)
+                .background(White)
         ) { page ->
             when (page) {
                 0 -> Page1()
