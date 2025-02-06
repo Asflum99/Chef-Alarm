@@ -1,8 +1,5 @@
 package com.asflum.cocina.pages.page1
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,10 +9,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -42,8 +42,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asflum.cocina.AppDatabase
 import com.asflum.cocina.FoodViewModelFactory
@@ -56,34 +58,15 @@ import com.asflum.cocina.ui.theme.LightMustardYellow
 import com.asflum.cocina.ui.theme.MustardYellow
 import com.asflum.cocina.ui.theme.SpinachGreen
 import com.asflum.cocina.ui.theme.TomatoRed
+import com.asflum.cocina.ui.theme.quicksandFamily
 import kotlinx.coroutines.launch
 import java.time.LocalTime
-import kotlin.math.roundToInt
 
 @Composable
 fun Page1() {
 
     var isDeleteMode by remember { mutableStateOf(false) }
     val borderColor by remember { derivedStateOf { if (isDeleteMode) DarkSpinachGreen.copy(alpha = 0.5f) else DarkSpinachGreen } }
-
-    val shakeOffset = remember { Animatable(0f) }
-
-    LaunchedEffect(isDeleteMode) {
-        if (isDeleteMode) {
-            while (true) {
-                shakeOffset.animateTo(
-                    targetValue = 4f, // Movimiento hacia la derecha
-                    animationSpec = tween(durationMillis = 70, easing = LinearEasing) // Efecto de la animación
-                )
-                shakeOffset.animateTo(
-                    targetValue = -4f, // Movimiento hacia la izquierda
-                    animationSpec = tween(durationMillis = 70, easing = LinearEasing) // Efecto de la animación
-                )
-            }
-        } else {
-            shakeOffset.snapTo(0f) // Vuelve a su posición original cuando isDeleteMode es false
-        }
-    }
 
     val context = LocalContext.current
     val savedConfigDao = AppDatabase.getInstance(context).savedConfigDao()
@@ -110,7 +93,7 @@ fun Page1() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.8f)
+                .weight(0.85f)
         ) {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 150.dp),
@@ -120,7 +103,7 @@ fun Page1() {
                 items(foodList.size) { food ->
                     Box(
                         modifier = Modifier
-                            .offset { IntOffset(shakeOffset.value.roundToInt(), 0) }
+//                            .offset { IntOffset(shakeOffset.value.roundToInt(), 0) }
                             .aspectRatio(1f)
                             .padding(5.dp)
                             .background(LightMustardYellow, RoundedCornerShape(8.dp))
@@ -130,16 +113,17 @@ fun Page1() {
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .clickable {
+                                // El icono de los alimentos solo será clickable cuando isDeleteMode sea false
                                 if (!isDeleteMode) {
                                     coroutineScope.launch {
                                         val currentTime = LocalTime.now()
                                         val alarmTime =
                                             currentTime.plusMinutes(foodList[food].estimatedTime.toLong())
                                         createAlarm(
-                                            context = context,
-                                            hour = alarmTime.hour,
-                                            minutes = alarmTime.minute,
-                                            message = foodList[food].foodName
+                                            context,
+                                            alarmTime.hour,
+                                            alarmTime.minute,
+                                            foodList[food].foodName
                                         )
                                     }
                                 }
@@ -161,7 +145,9 @@ fun Page1() {
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
-                                            text = "${foodList[food].foodQuantity} tazas"
+                                            "${foodList[food].foodQuantity} tazas",
+                                            fontWeight = FontWeight.Medium,
+                                            fontFamily = quicksandFamily
                                         )
                                     }
                                     Box(
@@ -172,61 +158,67 @@ fun Page1() {
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Image(
-                                            painter = painterResource(id = R.drawable.arroz),
-                                            contentDescription = "Taza de arroz",
-                                            modifier = Modifier
+                                            painterResource(id = R.drawable.arroz),
+                                            "Taza de arroz",
+                                            Modifier
                                                 .size(80.dp)
                                                 .padding(start = 15.dp)
                                         )
                                     }
                                     Box(
-                                        modifier = Modifier
+                                        Modifier
                                             .weight(0.25f)
                                             .fillMaxWidth()
                                             .background(MustardYellow),
-                                        contentAlignment = Alignment.Center
+                                        Alignment.Center
                                     ) {
                                         Text(
-                                            text = "${foodList[food].foodExtra} tazas de agua"
+                                            "${foodList[food].foodExtra} tazas de agua",
+                                            fontWeight = FontWeight.Medium,
+                                            fontFamily = quicksandFamily
                                         )
                                     }
                                 }
 
                                 "Espaguetis" -> {
                                     Box(
-                                        modifier = Modifier
+                                        Modifier
                                             .weight(0.25f)
                                             .fillMaxWidth()
                                             .background(LightMustardYellow),
-                                        contentAlignment = Alignment.Center
+                                        Alignment.Center
                                     ) {
                                         Text(
-                                            text = "${foodList[food].foodQuantity} gramos"
+                                            "${foodList[food].foodQuantity} gramos",
+                                            fontWeight = FontWeight.Medium,
+                                            fontFamily = quicksandFamily
                                         )
                                     }
                                     Box(
-                                        modifier = Modifier
+                                        Modifier
                                             .weight(0.5f)
                                             .fillMaxWidth()
                                             .background(LightMustardYellow),
-                                        contentAlignment = Alignment.Center
+                                        Alignment.Center
                                     ) {
                                         Image(
-                                            painter = painterResource(id = R.drawable.fideos),
-                                            contentDescription = "Olla con fideos",
-                                            modifier = Modifier
+                                            painterResource(id = R.drawable.fideos),
+                                            "Olla con fideos",
+                                            Modifier
                                                 .size(100.dp)
                                         )
                                     }
                                     Box(
-                                        modifier = Modifier
+                                        Modifier
                                             .weight(0.25f)
                                             .fillMaxWidth()
                                             .background(MustardYellow),
-                                        contentAlignment = Alignment.Center
+                                        Alignment.Center
                                     ) {
                                         Text(
-                                            text = "Textura: ${foodList[food].foodExtra}"
+                                            "Textura: ${foodList[food].foodExtra}",
+                                            fontWeight = FontWeight.Medium,
+                                            fontFamily = quicksandFamily
                                         )
                                     }
 
@@ -234,39 +226,48 @@ fun Page1() {
 
                                 else -> {
                                     Box(
-                                        modifier = Modifier
+                                        Modifier
                                             .weight(0.25f)
                                             .fillMaxWidth()
                                             .background(LightMustardYellow),
-                                        contentAlignment = Alignment.Center
+                                        Alignment.Center
                                     ) {
                                         Text(
-                                            text = "${foodList[food].foodQuantity} papas ${foodList[food].foodExtra?.lowercase()}"
+                                            if (foodList[food].foodQuantity.toInt() > 1) {
+                                                "${foodList[food].foodQuantity} papas ${foodList[food].potatoType?.lowercase()}s ${foodList[food].foodExtra?.lowercase()}s"
+                                            } else {
+                                                "${foodList[food].foodQuantity} papas ${foodList[food].potatoType?.lowercase()} ${foodList[food].foodExtra?.lowercase()}"
+                                            },
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            fontFamily = quicksandFamily
                                         )
                                     }
                                     Box(
-                                        modifier = Modifier
+                                        Modifier
                                             .weight(0.5f)
                                             .fillMaxWidth()
                                             .background(LightMustardYellow),
-                                        contentAlignment = Alignment.Center
+                                        Alignment.Center
                                     ) {
                                         Image(
-                                            painter = painterResource(id = R.drawable.papa),
-                                            contentDescription = "Papa",
-                                            modifier = Modifier
+                                            painterResource(id = R.drawable.papa),
+                                            "Papa",
+                                            Modifier
                                                 .size(80.dp)
                                         )
                                     }
                                     Box(
-                                        modifier = Modifier
+                                        Modifier
                                             .weight(0.25f)
                                             .fillMaxWidth()
                                             .background(MustardYellow),
-                                        contentAlignment = Alignment.Center
+                                        Alignment.Center
                                     ) {
                                         Text(
-                                            text = "Cocción: ${foodList[food].foodCook}"
+                                            "Cocción: ${foodList[food].foodCook}",
+                                            fontWeight = FontWeight.Medium,
+                                            fontFamily = quicksandFamily
                                         )
                                     }
                                 }
@@ -274,7 +275,7 @@ fun Page1() {
                         }
                         if (isDeleteMode) {
                             Box(
-                                modifier = Modifier
+                                Modifier
                                     .fillMaxSize()
                                     .clip(RoundedCornerShape(8.dp))
                                     .background(Color.Gray.copy(alpha = 0.5f))
@@ -293,8 +294,8 @@ fun Page1() {
                                 ) {
                                     Image(
                                         painterResource(R.drawable.tacho_01),
-                                        contentDescription = "Eliminar",
-                                        modifier = Modifier.size(24.dp)
+                                        "Eliminar",
+                                        Modifier.size(24.dp)
                                     )
                                 }
                             }
@@ -304,10 +305,11 @@ fun Page1() {
             }
         }
         Box(
-            modifier = Modifier
+            Modifier
                 .fillMaxWidth()
-                .weight(0.2f)
-                .background(DarkSpinachGreen)
+                .weight(0.15f)
+                .background(SpinachGreen),
+            Alignment.Center
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -321,23 +323,37 @@ fun Page1() {
                             foodViewModel.getAllFoodInfo()
                         }
                     },
-                    colors = ButtonColors(Color.White, Color.White, Color.White, SpinachGreen)
+                    colors = ButtonColors(Color.White, Color.White, Color.White, SpinachGreen),
+                    modifier = Modifier.weight(0.5f)
                 ) {
                     Text(
-                        text = "Borrar todos los alimentos",
-                        color = DarkGray
+                        "Borrar todos los alimentos",
+                        color = DarkGray,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = quicksandFamily
                     )
                 }
                 Button(
                     onClick = { isDeleteMode = !isDeleteMode },
-                    colors = ButtonColors(Color.White, Color.White, Color.White, SpinachGreen)
+                    colors = ButtonColors(Color.White, Color.White, Color.White, SpinachGreen),
+                    modifier = Modifier.weight(0.5f)
                 ) {
                     Text(
-                        text = if (isDeleteMode) "Cancelar" else "Borrar un alimento",
-                        color = DarkGray
+                        if (isDeleteMode) "Cancelar" else "Borrar un alimento",
+                        color = DarkGray,
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = quicksandFamily,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
         }
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()) // Obtiene la altura de la barra de navegación
+                .background(DarkGray)
+        )
     }
 }
