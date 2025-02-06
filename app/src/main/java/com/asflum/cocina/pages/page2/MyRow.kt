@@ -33,10 +33,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.asflum.cocina.ui.theme.DarkGray
-import com.asflum.cocina.ui.theme.DarkSpinachGreen
-import com.asflum.cocina.ui.theme.LightSpinachGreen
-import com.asflum.cocina.ui.theme.SpinachGreen
+import com.asflum.cocina.ui.theme.LightGray
+import com.asflum.cocina.ui.theme.MediumGreen
+import com.asflum.cocina.ui.theme.WarmWhite
+import com.asflum.cocina.ui.theme.White
 import com.asflum.cocina.ui.theme.quicksandFamily
 
 @Composable
@@ -55,8 +55,12 @@ fun MyRow(
     val input by viewModel.inputNumber.collectAsState()
 
     val selectedFood by viewModel.selectedFood.collectAsState()
+    val borderButtonColor: Color
     if ((text == "Cocción:" && selectedFood == "Espaguetis") || (text == "Cocción:" && selectedFood == "Arroz blanco")) {
         isButtonEnabled = false
+        borderButtonColor = LightGray
+    } else {
+        borderButtonColor = MediumGreen
     }
 
     val configuration = LocalConfiguration.current
@@ -97,8 +101,13 @@ fun MyRow(
                     expanded.value = true
                 },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonColors(Color.White, Color.DarkGray, Color.White, Color.DarkGray),
-                border = BorderStroke(3.dp, SpinachGreen),
+                colors = ButtonColors(
+                    Color.White,
+                    Color.DarkGray,
+                    Color.White,
+                    Color.DarkGray
+                ),
+                border = BorderStroke(3.dp, borderButtonColor),
                 shape = RoundedCornerShape(8.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
             ) {
@@ -111,32 +120,45 @@ fun MyRow(
             if (showError) {
                 AlertDialog(
                     onDismissRequest = { showError = false },
-                    title = { Text("Error") },
-                    text = { Text(errorMessage) },
+                    title = {
+                        Text(
+                            "Error",
+                            color = Color.Black
+                        )
+                    },
+                    text = {
+                        Text(
+                            errorMessage,
+                            color = Color.Black
+                        )
+                    },
                     confirmButton = {
                         Button(
                             onClick = { showError = false },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = DarkSpinachGreen
+                                containerColor = MediumGreen
                             )
                         ) {
-                            Text("Ok")
+                            Text(
+                                "Ok",
+                                color = White
+                            )
                         }
                     },
-                    containerColor = LightSpinachGreen
+                    containerColor = White
                 )
             }
             DropdownMenu(
                 expanded = expanded.value,
                 onDismissRequest = { expanded.value = false },
-                modifier = Modifier.background(LightSpinachGreen)
+                modifier = Modifier.background(WarmWhite)
             ) {
                 options.forEach { option ->
                     DropdownMenuItem(
                         text = {
                             Text(
                                 option,
-                                color = DarkGray,
+                                color = Color.Black,
                                 fontWeight = FontWeight.Medium,
                                 fontFamily = quicksandFamily
                             )
