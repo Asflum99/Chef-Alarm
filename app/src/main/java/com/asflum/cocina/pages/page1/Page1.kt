@@ -1,5 +1,6 @@
 package com.asflum.cocina.pages.page1
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,8 +23,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -52,12 +55,12 @@ import com.asflum.cocina.FoodViewModelFactory
 import com.asflum.cocina.MyApplication
 import com.asflum.cocina.R
 import com.asflum.cocina.createAlarm
-import com.asflum.cocina.ui.theme.DarkGray
-import com.asflum.cocina.ui.theme.DarkSpinachGreen
-import com.asflum.cocina.ui.theme.LightMustardYellow
-import com.asflum.cocina.ui.theme.MustardYellow
-import com.asflum.cocina.ui.theme.SpinachGreen
+import com.asflum.cocina.ui.theme.MediumGreen
+import com.asflum.cocina.ui.theme.SoftLightOrange
+import com.asflum.cocina.ui.theme.SoftOrange
 import com.asflum.cocina.ui.theme.TomatoRed
+import com.asflum.cocina.ui.theme.WarmWhite
+import com.asflum.cocina.ui.theme.White
 import com.asflum.cocina.ui.theme.quicksandFamily
 import kotlinx.coroutines.launch
 import java.time.LocalTime
@@ -66,7 +69,7 @@ import java.time.LocalTime
 fun Page1() {
 
     var isDeleteMode by remember { mutableStateOf(false) }
-    val borderColor by remember { derivedStateOf { if (isDeleteMode) DarkSpinachGreen.copy(alpha = 0.5f) else DarkSpinachGreen } }
+    val borderColor by remember { derivedStateOf { if (isDeleteMode) MediumGreen.copy(alpha = 0.5f) else MediumGreen } }
 
     val context = LocalContext.current
     val savedConfigDao = AppDatabase.getInstance(context).savedConfigDao()
@@ -80,6 +83,8 @@ fun Page1() {
     val foodList by foodViewModel.foodList.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
+
+    var showAlert by remember { mutableStateOf(false) }
 
     // Corrutina para conseguir la info de los alimentos
     LaunchedEffect(Unit) {
@@ -103,10 +108,8 @@ fun Page1() {
                 items(foodList.size) { food ->
                     Box(
                         modifier = Modifier
-//                            .offset { IntOffset(shakeOffset.value.roundToInt(), 0) }
                             .aspectRatio(1f)
                             .padding(5.dp)
-                            .background(LightMustardYellow, RoundedCornerShape(8.dp))
                             .border(
                                 width = 3.dp,
                                 color = borderColor,
@@ -141,7 +144,7 @@ fun Page1() {
                                         modifier = Modifier
                                             .weight(0.25f)
                                             .fillMaxWidth()
-                                            .background(LightMustardYellow),
+                                            .background(SoftLightOrange),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
@@ -154,7 +157,7 @@ fun Page1() {
                                         modifier = Modifier
                                             .weight(0.5f)
                                             .fillMaxWidth()
-                                            .background(LightMustardYellow),
+                                            .background(SoftLightOrange),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Image(
@@ -169,7 +172,7 @@ fun Page1() {
                                         Modifier
                                             .weight(0.25f)
                                             .fillMaxWidth()
-                                            .background(MustardYellow),
+                                            .background(SoftOrange),
                                         Alignment.Center
                                     ) {
                                         Text(
@@ -185,7 +188,7 @@ fun Page1() {
                                         Modifier
                                             .weight(0.25f)
                                             .fillMaxWidth()
-                                            .background(LightMustardYellow),
+                                            .background(SoftLightOrange),
                                         Alignment.Center
                                     ) {
                                         Text(
@@ -198,7 +201,7 @@ fun Page1() {
                                         Modifier
                                             .weight(0.5f)
                                             .fillMaxWidth()
-                                            .background(LightMustardYellow),
+                                            .background(SoftLightOrange),
                                         Alignment.Center
                                     ) {
                                         Image(
@@ -212,7 +215,7 @@ fun Page1() {
                                         Modifier
                                             .weight(0.25f)
                                             .fillMaxWidth()
-                                            .background(MustardYellow),
+                                            .background(SoftOrange),
                                         Alignment.Center
                                     ) {
                                         Text(
@@ -229,7 +232,7 @@ fun Page1() {
                                         Modifier
                                             .weight(0.25f)
                                             .fillMaxWidth()
-                                            .background(LightMustardYellow),
+                                            .background(SoftLightOrange),
                                         Alignment.Center
                                     ) {
                                         Text(
@@ -240,14 +243,15 @@ fun Page1() {
                                             },
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.Medium,
-                                            fontFamily = quicksandFamily
+                                            fontFamily = quicksandFamily,
+                                            textAlign = TextAlign.Center
                                         )
                                     }
                                     Box(
                                         Modifier
                                             .weight(0.5f)
                                             .fillMaxWidth()
-                                            .background(LightMustardYellow),
+                                            .background(SoftLightOrange),
                                         Alignment.Center
                                     ) {
                                         Image(
@@ -261,7 +265,7 @@ fun Page1() {
                                         Modifier
                                             .weight(0.25f)
                                             .fillMaxWidth()
-                                            .background(MustardYellow),
+                                            .background(SoftOrange),
                                         Alignment.Center
                                     ) {
                                         Text(
@@ -283,7 +287,8 @@ fun Page1() {
                                 IconButton(
                                     onClick = {
                                         coroutineScope.launch {
-                                            MyApplication.database.savedConfigDao().delete(foodList[food].id)
+                                            MyApplication.database.savedConfigDao()
+                                                .delete(foodList[food].id)
                                             foodViewModel.getAllFoodInfo()
                                         }
                                     },
@@ -291,11 +296,13 @@ fun Page1() {
                                         .size(52.dp)
                                         .background(TomatoRed, CircleShape)
                                         .align(Alignment.Center)
+                                        .border(3.dp, WarmWhite, CircleShape)
                                 ) {
                                     Image(
                                         painterResource(R.drawable.tacho_01),
                                         "Eliminar",
-                                        Modifier.size(24.dp)
+                                        Modifier.size(26.dp),
+                                        colorFilter = ColorFilter.tint(WarmWhite)
                                     )
                                 }
                             }
@@ -308,7 +315,7 @@ fun Page1() {
             Modifier
                 .fillMaxWidth()
                 .weight(0.15f)
-                .background(SpinachGreen),
+                .background(MediumGreen),
             Alignment.Center
         ) {
             Row(
@@ -318,17 +325,15 @@ fun Page1() {
             ) {
                 Button(
                     onClick = {
-                        coroutineScope.launch {
-                            MyApplication.database.savedConfigDao().deleteAll()
-                            foodViewModel.getAllFoodInfo()
-                        }
+                        showAlert = true
                     },
-                    colors = ButtonColors(Color.White, Color.White, Color.White, SpinachGreen),
-                    modifier = Modifier.weight(0.5f)
+                    colors = ButtonDefaults.buttonColors(TomatoRed),
+                    modifier = Modifier
+                        .weight(0.5f)
                 ) {
                     Text(
                         "Borrar todos los alimentos",
-                        color = DarkGray,
+                        color = White,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Medium,
                         fontFamily = quicksandFamily
@@ -336,12 +341,15 @@ fun Page1() {
                 }
                 Button(
                     onClick = { isDeleteMode = !isDeleteMode },
-                    colors = ButtonColors(Color.White, Color.White, Color.White, SpinachGreen),
-                    modifier = Modifier.weight(0.5f)
+                    colors = ButtonDefaults.buttonColors(White, TomatoRed),
+                    border = BorderStroke(3.dp, TomatoRed),
+                    modifier = Modifier
+                        .weight(0.5f)
+                        .clip(CircleShape)
                 ) {
                     Text(
                         if (isDeleteMode) "Cancelar" else "Borrar un alimento",
-                        color = DarkGray,
+                        color = TomatoRed,
                         fontWeight = FontWeight.Medium,
                         fontFamily = quicksandFamily,
                         textAlign = TextAlign.Center
@@ -352,8 +360,59 @@ fun Page1() {
         Box(
             Modifier
                 .fillMaxWidth()
-                .height(WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()) // Obtiene la altura de la barra de navegación
-                .background(DarkGray)
+                .height(
+                    WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                ) // Obtiene la altura de la barra de navegación
+                .background(Color.Black)
+        )
+    }
+    if (showAlert) {
+        AlertDialog(
+            onDismissRequest = { showAlert = false },
+            title = {
+                Text(
+                    "Alerta",
+                    color = Color.Black
+                )
+            },
+            text = {
+                Text(
+                    "¿Seguro que quieres eliminar todos los alimentos guardados? Esta acción es irreversible",
+                    color = Color.Black
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showAlert = false
+                        coroutineScope.launch {
+                            MyApplication.database.savedConfigDao().deleteAll()
+                            foodViewModel.getAllFoodInfo()
+                        }
+                    },
+                    border = BorderStroke(1.dp, TomatoRed),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = White
+                    )
+                ) {
+                    Text(
+                        "Sí",
+                        color = TomatoRed
+                    )
+                }
+                Button(
+                    onClick = { showAlert = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MediumGreen
+                    )
+                ) {
+                    Text(
+                        "No",
+                        color = White
+                    )
+                }
+            },
+            containerColor = White
         )
     }
 }
