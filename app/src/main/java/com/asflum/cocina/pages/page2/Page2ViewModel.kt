@@ -16,23 +16,23 @@ class Page2ViewModel: ViewModel() {
     val selectedMeasurement: StateFlow<String> get() = _selectedMeasurement
 
     // Selección de la cocción
-    private val _selectedCook = MutableStateFlow("Tipo de cocción")
+    private val _selectedCook = MutableStateFlow("Elegir")
     val selectedCook: StateFlow<String> get() = _selectedCook
 
     // Variables de papa
-    private val _selectedPotato = MutableStateFlow("Tamaño de papa") // Selección de tamaño
-    val selectedPotato: StateFlow<String> get() = _selectedPotato
-    private val _selectedTypePotato = MutableStateFlow("Tipo de papa") // Tipo de papa
+    private val _selectedTypePotato = MutableStateFlow("Elegir") // Tipo de papa
     val selectedTypePotato: StateFlow<String> get() = _selectedTypePotato
-    private val _selectedCutTypePotato = MutableStateFlow("Tipo de corte") // Tipo de corte de papa
+    private val _selectedPotato = MutableStateFlow("Elegir") // Selección de tamaño
+    val selectedPotato: StateFlow<String> get() = _selectedPotato
+    private val _selectedCutTypePotato = MutableStateFlow("Elegir") // Tipo de corte de papa
     val selectedCutTypePotato: StateFlow<String> get() = _selectedCutTypePotato
 
     // Cantidad ingresada por el usuario
-    private val _selectedRice = MutableStateFlow("Cantidad")
+    private val _selectedRice = MutableStateFlow("Elegir")
     val selectedRice: StateFlow<String> get() = _selectedRice
 
     // Textura de espaguetis escogida por el usuario
-    private val _selectedSpaghetti = MutableStateFlow("Textura")
+    private val _selectedSpaghetti = MutableStateFlow("Elegir")
     val selectedSpaghetti: StateFlow<String> get() = _selectedSpaghetti
 
     private val _inputNumber = MutableStateFlow("")
@@ -148,9 +148,9 @@ class Page2ViewModel: ViewModel() {
     }
 
     fun potatoCutTypeTimeCalculated(option: String) {
-        if (option == "Papa en mitades") {
+        if (option == "En mitades") {
             _timeCalculated.value = (_timeCalculated.value * 0.75).roundToInt()
-        } else if (option == "Papa en cuartos") {
+        } else if (option == "En cuartos") {
             _timeCalculated.value = (_timeCalculated.value * 0.6).roundToInt()
         }
     }
