@@ -56,7 +56,7 @@ fun MyRow(
 
     val selectedFood by viewModel.selectedFood.collectAsState()
     val borderButtonColor: Color
-    if ((text == "Cocción:" && selectedFood == "Espaguetis") || (text == "Cocción:" && selectedFood == "Arroz blanco")) {
+    if ((text == "Tipo de cocción:" && selectedFood == "Espaguetis") || (text == "Tipo de cocción:" && selectedFood == "Arroz blanco")) {
         isButtonEnabled = false
         borderButtonColor = LightGray
     } else {
