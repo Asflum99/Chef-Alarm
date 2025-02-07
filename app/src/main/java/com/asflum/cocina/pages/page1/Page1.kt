@@ -323,7 +323,7 @@ fun Page1() {
                                         .border(3.dp, WarmWhite, CircleShape)
                                 ) {
                                     Image(
-                                        painterResource(R.drawable.tacho_01),
+                                        painterResource(R.drawable.tacho),
                                         "Eliminar",
                                         Modifier.size(26.dp),
                                         colorFilter = ColorFilter.tint(WarmWhite)
