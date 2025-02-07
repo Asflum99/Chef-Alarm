@@ -198,7 +198,7 @@ fun Page2(
                                     }
                                 }
                                 optionsRice.clear()
-                                viewModel.updateSelectedRice("Cantidad")
+                                viewModel.updateSelectedRice("Elegir")
                                 if (newValue != "" && newValue != ".") {
                                     for (multiplier in multipliers) {
                                         optionsRice.add((newValue.toDouble() * multiplier.toDouble()).toString())
@@ -413,33 +413,30 @@ fun Page2(
             item {
                 Button(
                     onClick = {
-                        if (selectedFood == "Seleccione alimento") {
+                        if (selectedFood == "Elegir") {
                             showError = true
                             errorMessage = "Por favor, seleccione un alimento"
                         } else if (inputNumber.isEmpty()) {
                             showError = true
                             errorMessage = "Por favor, ingrese una cantidad"
-                        } else if (selectedMeasurement == "Tipo de medición") {
-                            showError = true
-                            errorMessage = "Por favor, seleccione un tipo de medición"
-                        } else if (selectedCook == "Elegir") {
-                            showError = true
-                            errorMessage = "Por favor, seleccione un tipo de cocción"
-                        } else if (selectedFood == "Papa" && selectedPotato == "Elegir") {
-                            showError = true
-                            errorMessage = "Por favor, seleccione un tamaño de papa"
                         } else if (selectedFood == "Papa" && selectedTypePotato == "Elegir") {
                             showError = true
                             errorMessage = "Por favor, seleccione un tipo de papa"
+                        } else if (selectedFood == "Papa" && selectedPotato == "Elegir") {
+                            showError = true
+                            errorMessage = "Por favor, seleccione un tamaño de papa"
                         } else if (selectedFood == "Papa" && selectedCutTypePotato == "Elegir") {
                             showError = true
-                            errorMessage = "Por favor, seleccione un tipo de corte para la papa"
+                            errorMessage = "Por favor, seleccione el estado de la papa"
+                        } else if (selectedFood == "Arroz blanco" && selectedRice == "Elegir") {
+                            showError = true
+                            errorMessage = "Por favor, seleccione una cantidad de tazas de agua"
+                        } else if (selectedCook == "Elegir") {
+                            showError = true
+                            errorMessage = "Por favor, seleccione un tipo de cocción"
                         } else if (selectedFood == "Espaguetis" && selectedSpaghetti == "Elegir") {
                             showError = true
                             errorMessage = "Por favor, seleccione una textura"
-                        } else if (selectedFood == "Arroz blanco" && selectedRice == "Cantidad") {
-                            showError = true
-                            errorMessage = "Por favor, seleccione una cantidad de tazas de agua"
                         } else {
                             calculateState = true
                         }
@@ -578,7 +575,7 @@ fun Page2(
                                 coroutineScope.launch {
                                     page.animateScrollToPage(0)
                                 }
-                                viewModel.updateSelectedFood("Seleccione alimento")
+                                viewModel.updateSelectedFood("Elegir")
                                 viewModel.updateSelectedMeasurement("Tipo de medición")
                                 viewModel.updateSelectedCook("Elegir")
                                 viewModel.updateSelectedPotato("Elegir")
@@ -613,13 +610,13 @@ fun Page2(
                 Spacer(modifier = Modifier.padding(bottom = dynamicHeightPadding))
                 Button(
                     onClick = {
-                        viewModel.updateSelectedFood("Seleccione alimento")
+                        viewModel.updateSelectedFood("Elegir")
                         viewModel.updateSelectedMeasurement("Tipo de medición")
                         viewModel.updateSelectedCook("Elegir")
                         viewModel.updateSelectedPotato("Elegir")
                         viewModel.updateSelectedTypePotato("Elegir")
                         viewModel.updateSelectedCutType("Elegir")
-                        viewModel.updateSelectedRice("Cantidad")
+                        viewModel.updateSelectedRice("Elegir")
                         viewModel.updateSelectedSpaghetti("Elegir")
                         viewModel.updateInputNumber("")
                         optionsRice.clear()
