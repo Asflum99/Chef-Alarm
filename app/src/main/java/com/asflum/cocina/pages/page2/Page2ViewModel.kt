@@ -8,7 +8,7 @@ import kotlin.math.roundToInt
 class Page2ViewModel: ViewModel() {
 
     // Selección del alimento
-    private val _selectedFood = MutableStateFlow("Seleccione alimento")
+    private val _selectedFood = MutableStateFlow("Elegir")
     val selectedFood: StateFlow<String> get() = _selectedFood
 
     // Selección de la medición
