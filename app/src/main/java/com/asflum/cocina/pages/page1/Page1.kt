@@ -148,8 +148,12 @@ fun Page1() {
                                         contentAlignment = Alignment.Center
                                     ) {
                                         Text(
-                                            "${foodList[food].foodQuantity} tazas",
-                                            fontWeight = FontWeight.Medium,
+                                            if (foodList[food].foodQuantity == "1") {
+                                                "${foodList[food].foodQuantity} taza"
+                                            } else {
+                                                "${foodList[food].foodQuantity} tazas"
+                                            },
+                                            fontWeight = FontWeight.SemiBold,
                                             fontFamily = quicksandFamily
                                         )
                                     }
@@ -176,8 +180,12 @@ fun Page1() {
                                         Alignment.Center
                                     ) {
                                         Text(
-                                            "${foodList[food].foodExtra} tazas de agua",
-                                            fontWeight = FontWeight.Medium,
+                                            if (foodList[food].foodQuantity.toDouble() < 2.0) {
+                                                "${foodList[food].foodQuantity} taza de agua"
+                                            } else {
+                                                "${foodList[food].foodQuantity} tazas de agua"
+                                            },
+                                            fontWeight = FontWeight.SemiBold,
                                             fontFamily = quicksandFamily
                                         )
                                     }
@@ -193,7 +201,7 @@ fun Page1() {
                                     ) {
                                         Text(
                                             "${foodList[food].foodQuantity} gramos",
-                                            fontWeight = FontWeight.Medium,
+                                            fontWeight = FontWeight.SemiBold,
                                             fontFamily = quicksandFamily
                                         )
                                     }
@@ -220,7 +228,7 @@ fun Page1() {
                                     ) {
                                         Text(
                                             "Textura: ${foodList[food].foodExtra}",
-                                            fontWeight = FontWeight.Medium,
+                                            fontWeight = FontWeight.SemiBold,
                                             fontFamily = quicksandFamily
                                         )
                                     }
@@ -242,9 +250,10 @@ fun Page1() {
                                                 "${foodList[food].foodQuantity} papas ${foodList[food].potatoType?.lowercase()} ${foodList[food].foodExtra?.lowercase()}"
                                             },
                                             fontSize = 14.sp,
-                                            fontWeight = FontWeight.Medium,
+                                            fontWeight = FontWeight.SemiBold,
                                             fontFamily = quicksandFamily,
-                                            textAlign = TextAlign.Center
+                                            textAlign = TextAlign.Center,
+                                            lineHeight = 18.sp
                                         )
                                     }
                                     Box(
@@ -269,9 +278,24 @@ fun Page1() {
                                         Alignment.Center
                                     ) {
                                         Text(
-                                            "Cocción: ${foodList[food].foodCook}",
-                                            fontWeight = FontWeight.Medium,
-                                            fontFamily = quicksandFamily
+                                            when (foodList[food].potatoCut) {
+                                                "Entera" -> {
+                                                    "Cocción: ${foodList[food].foodCook}\nEstado: ${foodList[food].potatoCut}"
+                                                }
+
+                                                "En mitades" -> {
+                                                    "Cocción: ${foodList[food].foodCook}\nEstado: ${foodList[food].potatoCut}"
+                                                }
+
+                                                else -> {
+                                                    "Cocción: ${foodList[food].foodCook}\nEstado: ${foodList[food].potatoCut}"
+                                                }
+                                            },
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            fontFamily = quicksandFamily,
+                                            textAlign = TextAlign.Center,
+                                            lineHeight = 18.sp
                                         )
                                     }
                                 }
@@ -324,10 +348,14 @@ fun Page1() {
                 modifier = Modifier.padding(screenWidth / 24)
             ) {
                 Button(
+                    enabled = foodList.isNotEmpty(),
                     onClick = {
                         showAlert = true
                     },
-                    colors = ButtonDefaults.buttonColors(TomatoRed),
+                    colors = ButtonDefaults.buttonColors(
+                        TomatoRed,
+                        disabledContainerColor = TomatoRed
+                    ),
                     modifier = Modifier
                         .weight(0.5f)
                 ) {
@@ -335,13 +363,14 @@ fun Page1() {
                         "Borrar todos los alimentos",
                         color = White,
                         textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Medium,
+                        fontWeight = FontWeight.SemiBold,
                         fontFamily = quicksandFamily
                     )
                 }
                 Button(
+                    enabled = foodList.isNotEmpty(),
                     onClick = { isDeleteMode = !isDeleteMode },
-                    colors = ButtonDefaults.buttonColors(White, TomatoRed),
+                    colors = ButtonDefaults.buttonColors(White, TomatoRed, White, TomatoRed),
                     border = BorderStroke(3.dp, TomatoRed),
                     modifier = Modifier
                         .weight(0.5f)
@@ -350,7 +379,7 @@ fun Page1() {
                     Text(
                         if (isDeleteMode) "Cancelar" else "Borrar un alimento",
                         color = TomatoRed,
-                        fontWeight = FontWeight.Medium,
+                        fontWeight = FontWeight.SemiBold,
                         fontFamily = quicksandFamily,
                         textAlign = TextAlign.Center
                     )
