@@ -31,10 +31,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.asflum.cocina.ui.theme.CocinaTheme
@@ -70,13 +68,12 @@ fun createAlarm(
         putExtra(AlarmClock.EXTRA_MESSAGE, message)
         putExtra(AlarmClock.EXTRA_SKIP_UI, true)
     }
+    // Condicional sugerida por IA para asegurar de que haya una app que pueda soportar el manejo de alarmas
     if (intent.resolveActivity(context.packageManager) != null) {
         context.startActivity(intent)
-        // FALTA PONER LA VENTANA DE ERROR
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun NavigationComponent() {
     val pagerState = rememberPagerState(
@@ -86,7 +83,7 @@ fun NavigationComponent() {
     val coroutineScope = rememberCoroutineScope()
     val currentPage = pagerState.currentPage
 
-    // Animación de transición de colores
+    // Animación de transición de colores (ayuda de la IA)
     val text1Color by animateColorAsState(
         targetValue = if (currentPage == 0) DarkGreen else White,
         animationSpec = tween(durationMillis = 200)
@@ -96,7 +93,7 @@ fun NavigationComponent() {
         animationSpec = tween(durationMillis = 200)
     )
 
-    // Obtener altura de la barra de estado
+    // Obtener altura de la barra de estado (ayuda de la IA)
     val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -105,14 +102,13 @@ fun NavigationComponent() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(statusBarHeight) // Solo cubre la barra de estado
-                .background(Color.Black) // CONSIDERAR EVALUACIÓN
         )
 
         // Parte superior fija
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.2f) // Porcentaje de espacio para la parte superior
+                .weight(0.2f)
                 .background(SoftOrange),
             contentAlignment = Alignment.Center // Los elementos dentro del Box (Row) estará centrado
         ) {

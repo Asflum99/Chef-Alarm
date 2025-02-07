@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 
+// Ayuda de la IA para poder implementar las Query de SQL
 @Dao
 interface SavedConfigDao {
     @Insert

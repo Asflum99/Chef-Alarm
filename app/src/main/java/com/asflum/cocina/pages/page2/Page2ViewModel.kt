@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.math.roundToInt
 
+// Ayuda de la IA para implementar este ViewModel
 class Page2ViewModel: ViewModel() {
 
     // Selección del alimento

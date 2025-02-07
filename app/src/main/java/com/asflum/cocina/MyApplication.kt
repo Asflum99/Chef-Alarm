@@ -3,6 +3,7 @@ package com.asflum.cocina
 import android.app.Application
 import androidx.room.Room
 
+// Ayuda de la IA
 class MyApplication : Application() {
     companion object {
         lateinit var database: AppDatabase

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+// Ayuda de la IA para implementar este ViewModel
 class FoodViewModel(private val savedConfigDao: SavedConfigDao) : ViewModel() {
 
     // Un flujo de datos observable por la UI

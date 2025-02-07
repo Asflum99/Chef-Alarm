@@ -100,6 +100,7 @@ fun Page1() {
                 .fillMaxWidth()
                 .weight(0.85f)
         ) {
+            // Elemento que sirve para mostrar solo los elementos visibles en la pantalla
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 150.dp),
                 modifier = Modifier.fillMaxSize(),
@@ -390,8 +391,8 @@ fun Page1() {
             Modifier
                 .fillMaxWidth()
                 .height(
-                    WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-                ) // Obtiene la altura de la barra de navegación
+                    WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()  // Obtiene la altura de la barra de navegación
+                )
                 .background(Color.Black)
         )
     }

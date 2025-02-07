@@ -102,6 +102,7 @@ fun Page2(
 
     // variables de Medición
     val selectedMeasurement by viewModel.selectedMeasurement.collectAsState()
+
     // Efecto que se ejecuta cuando selectedFood cambia
     LaunchedEffect(selectedFood) {
         when (selectedFood) {
