@@ -75,7 +75,7 @@ fun Page2(
     val optionsTypePotato = listOf("Blanca", "Amarilla")
     val expandedCutTypePotato = remember { mutableStateOf(false) }
     val selectedCutTypePotato by viewModel.selectedCutTypePotato.collectAsState()
-    val optionsCutTypePotato = listOf("Papa entera", "Papa en mitades", "Papa en cuartos")
+    val optionsCutTypePotato = listOf("Entera", "En mitades", "En cuartos")
 
     // variables de Arroz blanco
     val expandedRice = remember { mutableStateOf(false) }
@@ -107,6 +107,7 @@ fun Page2(
         when (selectedFood) {
             "Papa" -> {
                 viewModel.updateSelectedMeasurement("Unidad")
+                viewModel.updateSelectedCook("Elegir")
             }
 
             "Arroz blanco" -> {
@@ -209,7 +210,7 @@ fun Page2(
                                 Text(
                                     "Ingrese cantidad",
                                     color = Color.Black,
-                                    fontWeight = FontWeight.Medium,
+                                    fontWeight = FontWeight.SemiBold,
                                     fontFamily = quicksandFamily
                                 )
                             },
@@ -243,7 +244,7 @@ fun Page2(
                             ) {
                                 Text(
                                     "Unidades",
-                                    fontWeight = FontWeight.Medium,
+                                    fontWeight = FontWeight.SemiBold,
                                     fontFamily = quicksandFamily
                                 )
                             }
@@ -265,7 +266,7 @@ fun Page2(
                             ) {
                                 Text(
                                     "Vasos",
-                                    fontWeight = FontWeight.Medium,
+                                    fontWeight = FontWeight.SemiBold,
                                     fontFamily = quicksandFamily
                                 )
                             }
@@ -287,7 +288,7 @@ fun Page2(
                             ) {
                                 Text(
                                     "Gramos",
-                                    fontWeight = FontWeight.Medium,
+                                    fontWeight = FontWeight.SemiBold,
                                     fontFamily = quicksandFamily
                                 )
                             }
@@ -309,7 +310,7 @@ fun Page2(
                             ) {
                                 Text(
                                     "Tipo de medición",
-                                    fontWeight = FontWeight.Medium,
+                                    fontWeight = FontWeight.SemiBold,
                                     fontFamily = quicksandFamily
                                 )
                             }
@@ -339,7 +340,7 @@ fun Page2(
                     }
                     item {
                         MyRow(
-                            "Tipo de corte:",
+                            "Estado de la papa:",
                             expandedCutTypePotato,
                             selectedCutTypePotato,
                             optionsCutTypePotato,
@@ -376,39 +377,36 @@ fun Page2(
                 "Papa" -> {
                     item {
                         MyRow(
-                            "Cocción:",
+                            "Tipo de cocción:",
                             expandedCook,
                             selectedCook,
                             optionsCook,
                             viewModel
                         )
-                        viewModel.updateSelectedCook("Tipo de cocción")
                     }
                 }
 
                 "Espaguetis" -> {
                     item {
                         MyRow(
-                            "Cocción:",
+                            "Tipo de cocción:",
                             expandedCook,
                             selectedCook,
                             optionsCook,
                             viewModel
                         )
-                        // ACÁ DEBO DECIRLE QUE EL BOTÓN ESTÉ DESHABILITADO
                     }
                 }
 
                 "Arroz blanco" -> {
                     item {
                         MyRow(
-                            "Cocción:",
+                            "Tipo de cocción:",
                             expandedCook,
                             selectedCook,
                             optionsCook,
                             viewModel
                         )
-                        // ACÁ DEBO DECIRLE QUE EL BOTÓN ESTÉ DESHABILITADO
                     }
                 }
             }
@@ -424,19 +422,19 @@ fun Page2(
                         } else if (selectedMeasurement == "Tipo de medición") {
                             showError = true
                             errorMessage = "Por favor, seleccione un tipo de medición"
-                        } else if (selectedCook == "Tipo de cocción") {
+                        } else if (selectedCook == "Elegir") {
                             showError = true
                             errorMessage = "Por favor, seleccione un tipo de cocción"
-                        } else if (selectedFood == "Papa" && selectedPotato == "Tamaño de papa") {
+                        } else if (selectedFood == "Papa" && selectedPotato == "Elegir") {
                             showError = true
                             errorMessage = "Por favor, seleccione un tamaño de papa"
-                        } else if (selectedFood == "Papa" && selectedTypePotato == "Tipo de papa") {
+                        } else if (selectedFood == "Papa" && selectedTypePotato == "Elegir") {
                             showError = true
                             errorMessage = "Por favor, seleccione un tipo de papa"
-                        } else if (selectedFood == "Papa" && selectedCutTypePotato == "Tipo de corte") {
+                        } else if (selectedFood == "Papa" && selectedCutTypePotato == "Elegir") {
                             showError = true
                             errorMessage = "Por favor, seleccione un tipo de corte para la papa"
-                        } else if (selectedFood == "Espaguetis" && selectedSpaghetti == "Textura") {
+                        } else if (selectedFood == "Espaguetis" && selectedSpaghetti == "Elegir") {
                             showError = true
                             errorMessage = "Por favor, seleccione una textura"
                         } else if (selectedFood == "Arroz blanco" && selectedRice == "Cantidad") {
@@ -458,7 +456,7 @@ fun Page2(
                     Text(
                         "Calcular",
                         color = buttonCalculateTextColor,
-                        fontWeight = FontWeight.Medium,
+                        fontWeight = FontWeight.SemiBold,
                         fontFamily = quicksandFamily
                     )
                 }
@@ -482,7 +480,7 @@ fun Page2(
                             Text(
                                 "-1",
                                 color = White,
-                                fontWeight = FontWeight.Medium,
+                                fontWeight = FontWeight.SemiBold,
                                 fontFamily = quicksandFamily
                             )
                         }
@@ -502,7 +500,7 @@ fun Page2(
                             Text(
                                 "+1",
                                 color = White,
-                                fontWeight = FontWeight.Medium,
+                                fontWeight = FontWeight.SemiBold,
                                 fontFamily = quicksandFamily
                             )
                         }
@@ -527,7 +525,7 @@ fun Page2(
                             )
                             Text(
                                 "Recordar alimento",
-                                fontWeight = FontWeight.Medium,
+                                fontWeight = FontWeight.SemiBold,
                                 fontFamily = quicksandFamily
                             )
                         }
@@ -582,12 +580,12 @@ fun Page2(
                                 }
                                 viewModel.updateSelectedFood("Seleccione alimento")
                                 viewModel.updateSelectedMeasurement("Tipo de medición")
-                                viewModel.updateSelectedCook("Tipo de cocción")
-                                viewModel.updateSelectedPotato("Tamaño de papa")
-                                viewModel.updateSelectedTypePotato("Tipo de papa")
-                                viewModel.updateSelectedCutType("Tipo de corte")
+                                viewModel.updateSelectedCook("Elegir")
+                                viewModel.updateSelectedPotato("Elegir")
+                                viewModel.updateSelectedTypePotato("Elegir")
+                                viewModel.updateSelectedCutType("Elegir")
                                 viewModel.updateSelectedRice("Cantidad")
-                                viewModel.updateSelectedSpaghetti("Textura")
+                                viewModel.updateSelectedSpaghetti("Elegir")
                                 viewModel.updateInputNumber("")
                                 optionsRice.clear()
                                 calculateState = false
@@ -604,7 +602,7 @@ fun Page2(
                             Text(
                                 text = "Programar alarma",
                                 color = White,
-                                fontWeight = FontWeight.Medium,
+                                fontWeight = FontWeight.SemiBold,
                                 fontFamily = quicksandFamily
                             )
                         }
@@ -617,12 +615,12 @@ fun Page2(
                     onClick = {
                         viewModel.updateSelectedFood("Seleccione alimento")
                         viewModel.updateSelectedMeasurement("Tipo de medición")
-                        viewModel.updateSelectedCook("Tipo de cocción")
-                        viewModel.updateSelectedPotato("Tamaño de papa")
-                        viewModel.updateSelectedTypePotato("Tipo de papa")
-                        viewModel.updateSelectedCutType("Tipo de corte")
+                        viewModel.updateSelectedCook("Elegir")
+                        viewModel.updateSelectedPotato("Elegir")
+                        viewModel.updateSelectedTypePotato("Elegir")
+                        viewModel.updateSelectedCutType("Elegir")
                         viewModel.updateSelectedRice("Cantidad")
-                        viewModel.updateSelectedSpaghetti("Textura")
+                        viewModel.updateSelectedSpaghetti("Elegir")
                         viewModel.updateInputNumber("")
                         optionsRice.clear()
                         calculateState = false
@@ -636,7 +634,7 @@ fun Page2(
                 ) {
                     Text(
                         "Restablecer valores",
-                        fontWeight = FontWeight.Medium,
+                        fontWeight = FontWeight.SemiBold,
                         fontFamily = quicksandFamily
                     )
                 }
