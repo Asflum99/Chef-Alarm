@@ -79,7 +79,7 @@ fun MyRow(
             text,
             Modifier.weight(1f),
             fontSize = 19.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.SemiBold,
             fontFamily = quicksandFamily,
             textAlign = TextAlign.Center
         )
@@ -113,7 +113,7 @@ fun MyRow(
             ) {
                 Text(
                     selected,
-                    fontWeight = FontWeight.Medium,
+                    fontWeight = FontWeight.SemiBold,
                     fontFamily = quicksandFamily
                 )
             }
@@ -159,7 +159,7 @@ fun MyRow(
                             Text(
                                 option,
                                 color = Color.Black,
-                                fontWeight = FontWeight.Medium,
+                                fontWeight = FontWeight.SemiBold,
                                 fontFamily = quicksandFamily
                             )
                         },
@@ -181,7 +181,7 @@ fun MyRow(
                                     viewModel.updateSelectedSpaghetti(option)
                                 }
 
-                                "Cocción:" -> {
+                                "Tipo de cocción:" -> {
                                     viewModel.updateSelectedCook(option)
                                 }
 
@@ -189,7 +189,7 @@ fun MyRow(
                                     viewModel.updateSelectedTypePotato(option)
                                 }
 
-                                "Tipo de corte:" -> {
+                                "Estado de la papa:" -> {
                                     viewModel.updateSelectedCutType(option)
                                 }
                             }
@@ -213,7 +213,7 @@ fun MyRow(
                                             viewModel.vaporTimeCalculated()
                                         }
                                     }
-                                    if (text == "Tipo de corte:") {
+                                    if (text == "Estado de la papa:") {
                                         viewModel.potatoCutTypeTimeCalculated(option)
                                     }
                                 }
