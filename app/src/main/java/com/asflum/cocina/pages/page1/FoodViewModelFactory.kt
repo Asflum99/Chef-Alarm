@@ -1,8 +1,8 @@
-package com.asflum.cocina
+package com.asflum.cocina.pages.page1
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.asflum.cocina.pages.page1.FoodViewModel
+import com.asflum.cocina.database.SavedConfigDao
 
 // Ayuda de la IA para implementar este Factory del ViewModel
 class FoodViewModelFactory(private val savedConfigDao: SavedConfigDao) : ViewModelProvider.Factory {

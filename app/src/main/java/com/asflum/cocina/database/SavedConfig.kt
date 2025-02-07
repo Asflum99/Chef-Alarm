@@ -1,4 +1,4 @@
-package com.asflum.cocina
+package com.asflum.cocina.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

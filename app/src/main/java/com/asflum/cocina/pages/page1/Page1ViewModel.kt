@@ -2,8 +2,8 @@ package com.asflum.cocina.pages.page1
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.asflum.cocina.SavedConfig
-import com.asflum.cocina.SavedConfigDao
+import com.asflum.cocina.database.SavedConfig
+import com.asflum.cocina.database.SavedConfigDao
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

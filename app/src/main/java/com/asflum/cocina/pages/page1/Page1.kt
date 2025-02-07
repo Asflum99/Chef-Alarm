@@ -50,9 +50,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.asflum.cocina.AppDatabase
-import com.asflum.cocina.FoodViewModelFactory
-import com.asflum.cocina.MyApplication
+import com.asflum.cocina.database.AppDatabase
+import com.asflum.cocina.database.MyApplication
 import com.asflum.cocina.R
 import com.asflum.cocina.createAlarm
 import com.asflum.cocina.ui.theme.MediumGreen

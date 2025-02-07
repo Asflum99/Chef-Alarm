@@ -50,8 +50,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.asflum.cocina.MyApplication
-import com.asflum.cocina.SavedConfig
+import com.asflum.cocina.database.MyApplication
+import com.asflum.cocina.database.SavedConfig
 import com.asflum.cocina.createAlarm
 import com.asflum.cocina.ui.theme.DarkGreen
 import com.asflum.cocina.ui.theme.LightGray

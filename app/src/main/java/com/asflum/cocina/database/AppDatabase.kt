@@ -1,4 +1,4 @@
-package com.asflum.cocina
+package com.asflum.cocina.database
 
 import android.content.Context
 import androidx.room.Database
