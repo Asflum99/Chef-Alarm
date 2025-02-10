@@ -128,10 +128,10 @@ class Page2ViewModel: ViewModel() {
     fun spaghettiTimeCalculated(option: String) {
         _timeCalculated.value = when (option) {
             "Al dente" -> {
-                8
+                9
             }
             else -> {
-                10
+                13
             }
         }
     }
